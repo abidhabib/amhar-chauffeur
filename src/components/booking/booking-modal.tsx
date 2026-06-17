@@ -2,8 +2,13 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowRight, ArrowLeft, Check, MapPin, Calendar, Clock, Users, Briefcase, Phone, Mail, User, MessageCircle } from "lucide-react";
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  X, ArrowRight, ArrowLeft, Check, MapPin, Calendar, Clock,
+  Users, Briefcase, Phone, Mail, User, MessageCircle,
+} from "lucide-react";
+import {
+  Dialog, DialogContent, DialogTitle, DialogDescription,
+} from "@/components/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useBookingStore } from "@/stores/booking-store";
 import { LuxuryButton } from "@/components/shared/luxury-button";
@@ -12,17 +17,14 @@ import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 
 interface FormState {
-  // Step 1 — journey
   pickup: string;
   destination: string;
   pickupDate: string;
   pickupTime: string;
-  // Step 2 — vehicle
   vehicleCategory: VehicleCategory;
   vehicleId: string | null;
   passengers: number;
   luggage: number;
-  // Step 3 — contact
   fullName: string;
   email: string;
   phone: string;
@@ -58,11 +60,9 @@ export function BookingModal() {
     notes: "",
   });
 
-  // Apply preselection on first open
   const onOpenChange = (v: boolean) => {
     if (!v) {
       closeModal();
-      // Reset after close animation
       setTimeout(() => {
         setStep(0);
         setSubmittedRef(null);
@@ -79,7 +79,6 @@ export function BookingModal() {
         }));
       }, 250);
     } else {
-      // Apply preselection
       if (preselectedCategory || preselectedVehicleId) {
         setForm((f) => ({
           ...f,
@@ -101,8 +100,7 @@ export function BookingModal() {
         /^\d{4}-\d{2}-\d{2}$/.test(form.pickupDate) &&
         /^\d{2}:\d{2}$/.test(form.pickupTime)
       );
-    if (step === 1)
-      return form.passengers >= 1 && form.luggage >= 0;
+    if (step === 1) return form.passengers >= 1 && form.luggage >= 0;
     if (step === 2)
       return (
         form.fullName.trim().length >= 2 &&
@@ -130,7 +128,10 @@ export function BookingModal() {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[680px] p-0 bg-card border-foreground/[0.12] rounded-sm overflow-hidden max-h-[92svh] overflow-y-auto shadow-[0_40px_100px_-30px_rgba(26,22,18,0.4)]">
+      <DialogContent
+        showCloseButton={false}
+        className="max-w-[680px] w-[calc(100%-2rem)] p-0 gap-0 bg-card border-foreground/[0.12] rounded-md overflow-hidden shadow-[0_40px_100px_-30px_rgba(26,22,18,0.5)] max-h-[92svh] flex flex-col"
+      >
         <VisuallyHidden>
           <DialogTitle>Request a Quote</DialogTitle>
           <DialogDescription>
@@ -138,30 +139,32 @@ export function BookingModal() {
           </DialogDescription>
         </VisuallyHidden>
 
-        {/* Close button — top right */}
-        <button
-          onClick={() => onOpenChange(false)}
-          className="absolute top-5 right-5 z-20 w-10 h-10 flex items-center justify-center text-foreground/65 hover:text-foreground hover:bg-foreground/[0.06] rounded-sm transition-all duration-200"
-          aria-label="Close"
-        >
-          <X size={20} strokeWidth={1.5} />
-        </button>
-
-        {/* Modal header — luxury header bar */}
-        <div className="px-9 pt-10 pb-7 border-b border-foreground/[0.10] relative bg-gradient-to-br from-card via-card to-[#b08842]/[0.04]">
-          {/* Subtle gold gradient accent in top-right of header */}
+        {/* Header — fixed at top */}
+        <div className="relative px-6 sm:px-9 pt-8 pb-6 border-b border-foreground/[0.10] bg-gradient-to-br from-card via-card to-[#b08842]/[0.05] flex-shrink-0">
+          {/* Gold gradient accent */}
           <div
             aria-hidden
-            className="absolute top-0 right-0 w-48 h-48 opacity-50 pointer-events-none"
+            className="absolute top-0 right-0 w-48 h-48 opacity-60 pointer-events-none"
             style={{
-              background: "radial-gradient(circle at 100% 0%, rgba(176, 136, 66, 0.20) 0%, transparent 60%)",
+              background:
+                "radial-gradient(circle at 100% 0%, rgba(176, 136, 66, 0.22) 0%, transparent 60%)",
             }}
           />
+
+          {/* Custom close button — single, prominent */}
+          <button
+            onClick={() => onOpenChange(false)}
+            className="absolute top-5 right-5 z-20 w-10 h-10 flex items-center justify-center text-foreground/65 hover:text-foreground hover:bg-foreground/[0.08] rounded-sm transition-all duration-200"
+            aria-label="Close"
+          >
+            <X size={20} strokeWidth={1.5} />
+          </button>
+
           <p className="text-eyebrow mb-3 relative flex items-center gap-3">
             <span className="w-7 h-px bg-[#b08842]" />
             Request a Quote
           </p>
-          <h2 className="text-[26px] font-semibold text-foreground tracking-tight relative">
+          <h2 className="text-[24px] sm:text-[26px] font-semibold text-foreground tracking-tight relative pr-10">
             {submittedRef ? "Request received" : "Tell us about your journey"}
           </h2>
           {!submittedRef && (
@@ -171,102 +174,115 @@ export function BookingModal() {
           )}
         </div>
 
-        {submittedRef ? (
-          <SuccessState reference={submittedRef} onClose={() => onOpenChange(false)} />
-        ) : (
-          <>
-            {/* Step indicator */}
-            <div className="px-9 py-6 border-b border-foreground/[0.10] flex items-center gap-3 bg-[#fffdf8]">
-              {STEPS.map((label, i) => (
-                <div key={label} className="flex items-center gap-3 flex-1 last:flex-none">
+        {/* Body — scrollable, contains step content OR success state */}
+        <div className="flex-1 overflow-y-auto">
+          {submittedRef ? (
+            <SuccessState reference={submittedRef} onClose={() => onOpenChange(false)} />
+          ) : (
+            <>
+              {/* Step indicator — non-scrolling */}
+              <div className="px-6 sm:px-9 py-5 border-b border-foreground/[0.10] bg-[#fffdf8] flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                {STEPS.map((label, i) => (
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold transition-all duration-300 ${
-                      i < step
-                        ? "bg-gradient-to-br from-[#d4b876] to-[#b08842] text-[#1a1612]"
-                        : i === step
-                          ? "bg-[#1a1612] text-[#f6f1e9]"
-                          : "border border-foreground/20 text-foreground/50"
-                    }`}
+                    key={label}
+                    className="flex items-center gap-2 sm:gap-3 flex-1 last:flex-none min-w-0"
                   >
-                    {i < step ? <Check size={12} strokeWidth={2.5} /> : i + 1}
+                    <div
+                      className={`flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[10px] sm:text-[11px] font-bold transition-all duration-300 ${
+                        i < step
+                          ? "bg-gradient-to-br from-[#d4b876] to-[#b08842] text-[#1a1612]"
+                          : i === step
+                            ? "bg-[#1a1612] text-[#f6f1e9]"
+                            : "border border-foreground/20 text-foreground/50"
+                      }`}
+                    >
+                      {i < step ? <Check size={11} strokeWidth={2.5} /> : i + 1}
+                    </div>
+                    <span
+                      className={`hidden sm:inline text-[11px] tracking-[0.22em] uppercase transition-colors duration-300 font-semibold ${
+                        i === step ? "text-foreground" : "text-foreground/45"
+                      }`}
+                    >
+                      {label}
+                    </span>
+                    {i < STEPS.length - 1 && (
+                      <div className="flex-1 h-px bg-foreground/[0.10] min-w-[8px]" />
+                    )}
                   </div>
-                  <span
-                    className={`text-[11px] tracking-[0.22em] uppercase transition-colors duration-300 font-semibold ${
-                      i === step ? "text-foreground" : "text-foreground/45"
-                    }`}
+                ))}
+              </div>
+
+              {/* Step body — scrollable if needed */}
+              <div className="px-6 sm:px-9 py-7 sm:py-9 min-h-[340px]">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={step}
+                    initial={{ opacity: 0, x: 16 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -16 }}
+                    transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                   >
-                    {label}
-                  </span>
-                  {i < STEPS.length - 1 && (
-                    <div className="flex-1 h-px bg-foreground/[0.10]" />
-                  )}
-                </div>
-              ))}
-            </div>
+                    {step === 0 && <StepJourney form={form} update={update} />}
+                    {step === 1 && (
+                      <StepVehicle
+                        form={form}
+                        update={update}
+                        preselectedVehicleName={preselectedVehicleName}
+                      />
+                    )}
+                    {step === 2 && <StepContact form={form} update={update} />}
+                    {step === 3 && (
+                      <StepReview
+                        form={form}
+                        preselectedVehicleName={preselectedVehicleName}
+                      />
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </>
+          )}
+        </div>
 
-            {/* Step body */}
-            <div className="px-9 py-9 min-h-[340px]">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={step}
-                  initial={{ opacity: 0, x: 16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -16 }}
-                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  {step === 0 && <StepJourney form={form} update={update} />}
-                  {step === 1 && (
-                    <StepVehicle
-                      form={form}
-                      update={update}
-                      preselectedVehicleName={preselectedVehicleName}
-                    />
-                  )}
-                  {step === 2 && <StepContact form={form} update={update} />}
-                  {step === 3 && <StepReview form={form} preselectedVehicleName={preselectedVehicleName} />}
-                </motion.div>
-              </AnimatePresence>
-            </div>
+        {/* Footer — fixed at bottom (only when not submitted) */}
+        {!submittedRef && (
+          <div className="px-6 sm:px-9 py-5 border-t border-foreground/[0.10] bg-[#fffdf8] flex items-center justify-between gap-3 flex-shrink-0">
+            {step > 0 ? (
+              <LuxuryButton
+                size="md"
+                variant="ghost"
+                onClick={() => setStep((s) => s - 1)}
+                disabled={submitting}
+              >
+                <ArrowLeft size={14} strokeWidth={2} />
+                Back
+              </LuxuryButton>
+            ) : (
+              <div />
+            )}
 
-            {/* Footer — nav buttons */}
-            <div className="px-9 py-7 border-t border-foreground/[0.10] flex items-center justify-between gap-3 bg-[#fffdf8]">
-              {step > 0 ? (
-                <LuxuryButton
-                  size="md"
-                  variant="ghost"
-                  onClick={() => setStep((s) => s - 1)}
-                  disabled={submitting}
-                >
-                  <ArrowLeft size={14} strokeWidth={2} />
-                  Back
-                </LuxuryButton>
-              ) : (
-                <div />
-              )}
-
-              {step < STEPS.length - 1 ? (
-                <LuxuryButton
-                  size="md"
-                  variant="solid-gold"
-                  onClick={() => setStep((s) => s + 1)}
-                  disabled={!canProceed()}
-                >
-                  Continue
-                  <ArrowRight size={14} strokeWidth={2} />
-                </LuxuryButton>
-              ) : (
-                <LuxuryButton
-                  size="md"
-                  variant="solid-gold"
-                  onClick={submit}
-                  disabled={submitting}
-                >
-                  {submitting ? "Submitting…" : "Submit Request"}
-                  {!submitting && <ArrowRight size={13} strokeWidth={2} />}
-                </LuxuryButton>
-              )}
-            </div>
-          </>
+            {step < STEPS.length - 1 ? (
+              <LuxuryButton
+                size="md"
+                variant="solid-gold"
+                onClick={() => setStep((s) => s + 1)}
+                disabled={!canProceed()}
+              >
+                Continue
+                <ArrowRight size={14} strokeWidth={2} />
+              </LuxuryButton>
+            ) : (
+              <LuxuryButton
+                size="md"
+                variant="solid-gold"
+                onClick={submit}
+                disabled={submitting}
+              >
+                {submitting ? "Submitting…" : "Submit Request"}
+                {!submitting && <ArrowRight size={14} strokeWidth={2} />}
+              </LuxuryButton>
+            )}
+          </div>
         )}
       </DialogContent>
     </Dialog>
@@ -285,7 +301,7 @@ function StepJourney({
 }) {
   const today = new Date().toISOString().slice(0, 10);
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <Field label="Pickup location" icon={<MapPin size={13} />}>
         <input
           type="text"
@@ -306,7 +322,7 @@ function StepJourney({
         />
       </Field>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="Date" icon={<Calendar size={13} />}>
           <input
             type="date"
@@ -342,7 +358,7 @@ function StepVehicle({
   preselectedVehicleName: string | null;
 }) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div>
         <p className="text-eyebrow-muted mb-3">Vehicle Category</p>
         <div className="grid grid-cols-2 gap-3">
@@ -355,18 +371,21 @@ function StepVehicle({
                 onClick={() => update("vehicleCategory", c)}
                 className={`relative p-4 text-left rounded-sm border transition-all duration-300 overflow-hidden group ${
                   selected
-                    ? "border-[#c9a961] bg-[#c9a961]/[0.08]"
-                    : "border-foreground/[0.12] hover:border-foreground/30 bg-foreground/[0.02]"
+                    ? "border-[#b08842] bg-[#b08842]/[0.08]"
+                    : "border-foreground/[0.12] hover:border-foreground/30 bg-cream"
                 }`}
                 style={{ transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)" }}
               >
-                {/* Selected check mark */}
                 {selected && (
-                  <span className="absolute top-3 right-3 w-4 h-4 rounded-full bg-[#c9a961] flex items-center justify-center">
-                    <Check size={9} strokeWidth={3} className="text-[#0a0a0b]" />
+                  <span className="absolute top-3 right-3 w-4 h-4 rounded-full bg-gradient-to-br from-[#d4b876] to-[#b08842] flex items-center justify-center">
+                    <Check size={9} strokeWidth={3} className="text-[#1a1612]" />
                   </span>
                 )}
-                <div className={`text-[13px] font-medium mb-1 transition-colors duration-300 ${selected ? "text-[#c9a961]" : "text-foreground group-hover:text-foreground"}`}>
+                <div
+                  className={`text-[13px] font-semibold mb-1 transition-colors duration-300 ${
+                    selected ? "text-[#b08842]" : "text-foreground"
+                  }`}
+                >
                   {meta.label}
                 </div>
                 <div className="text-[11px] text-foreground/55 font-normal leading-snug">
@@ -379,9 +398,9 @@ function StepVehicle({
       </div>
 
       {preselectedVehicleName && (
-        <div className="px-4 py-3 rounded-sm border border-[#c9a961]/30 bg-[#c9a961]/[0.04]">
-          <p className="text-[11px] text-foreground/55">
-            <span className="text-[#c9a961] font-medium">Pre-selected:</span>{" "}
+        <div className="px-4 py-3 rounded-sm border border-[#b08842]/30 bg-[#b08842]/[0.05]">
+          <p className="text-[12px] text-foreground/75">
+            <span className="text-[#b08842] font-semibold">Pre-selected:</span>{" "}
             {preselectedVehicleName}
           </p>
         </div>
@@ -407,13 +426,15 @@ function StepVehicle({
       </div>
 
       <div>
-        <label className="text-eyebrow-muted block mb-3">Additional notes (optional)</label>
+        <label className="text-eyebrow-muted block mb-3">
+          Additional notes (optional)
+        </label>
         <textarea
           value={form.notes}
           onChange={(e) => update("notes", e.target.value)}
           placeholder="e.g. child seat required, multiple stops, VIP protocol"
           rows={3}
-          className="w-full px-4 py-3 bg-transparent border border-foreground/10 rounded-sm text-[13px] font-light text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-[#c9a961] transition-colors duration-250 resize-none"
+          className="w-full px-4 py-3 bg-cream border border-foreground/[0.12] rounded-sm text-[14px] font-normal text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-[#b08842] focus:shadow-[0_0_0_3px_rgba(176,136,66,0.10)] transition-all duration-220 resize-none"
         />
       </div>
     </div>
@@ -431,7 +452,7 @@ function StepContact({
   update: <K extends keyof FormState>(key: K, value: FormState[K]) => void;
 }) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <Field label="Full name" icon={<User size={13} />}>
         <input
           type="text"
@@ -448,14 +469,15 @@ function StepContact({
           <select
             value={form.countryCode}
             onChange={(e) => update("countryCode", e.target.value)}
-            className="amhar-input w-[110px] flex-shrink-0"
+            className="amhar-input flex-shrink-0"
+            style={{ width: "112px" }}
           >
             <option value="+966">🇸🇦 +966</option>
             <option value="+971">🇦🇪 +971</option>
             <option value="+973">🇧🇭 +973</option>
             <option value="+974">🇶🇦 +974</option>
             <option value="+965">🇰🇼 +965</option>
-            <option value="+971">🇴🇲 +968</option>
+            <option value="+968">🇴🇲 +968</option>
             <option value="+44">🇬🇧 +44</option>
             <option value="+1">🇺🇸 +1</option>
           </select>
@@ -464,7 +486,7 @@ function StepContact({
             value={form.phone}
             onChange={(e) => update("phone", e.target.value)}
             placeholder="50 315 2119"
-            className="amhar-input flex-1"
+            className="amhar-input flex-1 min-w-0"
           />
         </div>
       </div>
@@ -479,8 +501,12 @@ function StepContact({
         />
       </Field>
 
-      <div className="flex items-start gap-2.5 pt-2 text-[11px] text-foreground/45 leading-relaxed">
-        <MessageCircle size={12} className="mt-0.5 flex-shrink-0 text-[#c9a961]" strokeWidth={1.5} />
+      <div className="flex items-start gap-2.5 pt-2 text-[12px] text-foreground/60 leading-relaxed">
+        <MessageCircle
+          size={14}
+          className="mt-0.5 flex-shrink-0 text-[#b08842]"
+          strokeWidth={1.5}
+        />
         <p>
           We&apos;ll contact you via WhatsApp within minutes of submission to
           confirm details and provide a tailored quote. Your information is
@@ -527,25 +553,27 @@ function StepReview({
 
   return (
     <div>
-      <p className="text-[12px] text-foreground/55 mb-6 font-light">
+      <p className="text-[13px] text-foreground/65 mb-5 font-normal">
         Please review your request before submitting. You can step back to make changes.
       </p>
-      <dl className="divide-y divide-foreground/[0.06] border-y border-foreground/[0.06]">
+      <dl className="divide-y divide-foreground/[0.08] border-y border-foreground/[0.10]">
         {rows.map((r) => (
-          <div key={r.label} className="grid grid-cols-3 gap-4 py-4">
-            <dt className="text-[10px] tracking-[0.2em] uppercase text-foreground/40 pt-0.5">
+          <div key={r.label} className="grid grid-cols-3 gap-3 sm:gap-4 py-3.5">
+            <dt className="text-[10px] tracking-[0.20em] uppercase text-foreground/50 pt-0.5 font-semibold">
               {r.label}
             </dt>
-            <dd className="col-span-2 text-[13px] text-foreground font-light">
+            <dd className="col-span-2 text-[13px] sm:text-[14px] text-foreground font-normal break-words">
               {r.value || <span className="text-foreground/40">—</span>}
             </dd>
           </div>
         ))}
       </dl>
       {form.notes && (
-        <div className="mt-6 p-4 rounded-sm bg-foreground/[0.02] border border-foreground/[0.06]">
-          <p className="text-[10px] tracking-[0.2em] uppercase text-foreground/40 mb-2">Notes</p>
-          <p className="text-[13px] text-foreground/70 font-light">{form.notes}</p>
+        <div className="mt-5 p-4 rounded-sm bg-foreground/[0.02] border border-foreground/[0.08]">
+          <p className="text-[10px] tracking-[0.20em] uppercase text-foreground/50 mb-2 font-semibold">
+            Notes
+          </p>
+          <p className="text-[13px] text-foreground/80 font-normal">{form.notes}</p>
         </div>
       )}
     </div>
@@ -555,31 +583,37 @@ function StepReview({
 // =====================================================================
 // Success state
 // =====================================================================
-function SuccessState({ reference, onClose }: { reference: string; onClose: () => void }) {
+function SuccessState({
+  reference,
+  onClose,
+}: {
+  reference: string;
+  onClose: () => void;
+}) {
   return (
-    <div className="px-8 py-12 text-center">
+    <div className="px-6 sm:px-9 py-12 text-center">
       <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
+        initial={{ scale: 0.85, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="w-14 h-14 rounded-full bg-[#c9a961] flex items-center justify-center mx-auto mb-6"
+        transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+        className="w-16 h-16 rounded-full bg-gradient-to-br from-[#d4b876] to-[#b08842] flex items-center justify-center mx-auto mb-7 shadow-[0_14px_40px_-12px_rgba(176,136,66,0.5)]"
       >
-        <Check size={22} strokeWidth={2.5} className="text-[#0a0a0b]" />
+        <Check size={26} strokeWidth={2.5} className="text-[#1a1612]" />
       </motion.div>
-      <h3 className="text-[22px] font-light text-foreground mb-3 tracking-tight">
+      <h3 className="text-[24px] font-semibold text-foreground mb-4 tracking-tight">
         Your request is in.
       </h3>
-      <p className="text-[13px] text-foreground/55 font-light max-w-sm mx-auto mb-2">
+      <p className="text-[14px] text-foreground/70 font-normal max-w-sm mx-auto mb-3 leading-relaxed">
         Our concierge team will contact you on WhatsApp within minutes to confirm
         details and provide a tailored quote.
       </p>
-      <p className="text-[11px] tracking-[0.2em] uppercase text-foreground/40 mb-8">
-        Reference: <span className="text-[#c9a961]">{reference}</span>
+      <p className="text-[11px] tracking-[0.22em] uppercase text-foreground/45 mb-8 font-semibold">
+        Reference: <span className="text-[#b08842]">{reference}</span>
       </p>
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <a href={`https://wa.me/966503152119`} target="_blank" rel="noreferrer">
           <LuxuryButton size="md" variant="solid-gold">
-            <MessageCircle size={13} strokeWidth={2} />
+            <MessageCircle size={14} strokeWidth={2} />
             Message us now
           </LuxuryButton>
         </a>
@@ -651,7 +685,7 @@ function StepperField({
             const v = parseInt(e.target.value, 10);
             if (!isNaN(v)) onChange(Math.max(min, Math.min(max, v)));
           }}
-          className="amhar-stepper-input flex-1 h-full bg-transparent text-center text-[22px] font-semibold text-foreground focus:outline-none border-x border-foreground/[0.12] tabular-nums"
+          className="amhar-stepper-input flex-1 w-full min-w-0 h-full bg-transparent text-center text-[22px] font-semibold text-foreground focus:outline-none border-x border-foreground/[0.12] tabular-nums"
         />
         <button
           onClick={() => onChange(Math.min(max, value + 1))}

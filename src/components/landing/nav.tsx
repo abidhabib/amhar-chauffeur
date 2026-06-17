@@ -20,7 +20,7 @@ export function LandingNav() {
   const openBooking = useBookingStore((s) => s.openModal);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => setScrolled(window.scrollY > 80);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -47,12 +47,16 @@ export function LandingNav() {
     return () => observer.disconnect();
   }, []);
 
+  // When not scrolled (over dark hero), use ivory text.
+  // When scrolled (over ivory body), use espresso text.
+  const onDark = !scrolled && !mobileOpen;
+
   return (
     <header
       className={cn(
-        "fixed top-0 inset-x-0 z-50 transition-all duration-400 ease-out",
+        "fixed top-0 inset-x-0 z-50 transition-all duration-400",
         scrolled
-          ? "bg-background/85 backdrop-blur-xl border-b border-foreground/[0.10] py-0"
+          ? "bg-background/85 backdrop-blur-xl border-b border-foreground/[0.10]"
           : "bg-transparent border-b border-transparent",
       )}
       style={{ transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)" }}
@@ -65,10 +69,22 @@ export function LandingNav() {
             className="flex items-center gap-3 group"
             aria-label="AMHAR home"
           >
-            <span className="text-[17px] font-semibold tracking-[0.34em] text-foreground transition-colors duration-300">
+            <span
+              className={cn(
+                "text-[17px] font-semibold tracking-[0.34em] transition-colors duration-400",
+                onDark ? "text-[#f6f1e9]" : "text-foreground",
+              )}
+            >
               AMHAR
             </span>
-            <span className="hidden sm:inline text-[10px] tracking-[0.26em] uppercase text-foreground/45 group-hover:text-[#b08842] transition-colors duration-300 font-semibold">
+            <span
+              className={cn(
+                "hidden sm:inline text-[10px] tracking-[0.26em] uppercase transition-colors duration-400 font-semibold",
+                onDark
+                  ? "text-[#f6f1e9]/55 group-hover:text-[#d4b876]"
+                  : "text-foreground/50 group-hover:text-[#b08842]",
+              )}
+            >
               Chauffeur
             </span>
           </a>
@@ -83,15 +99,16 @@ export function LandingNav() {
                   href={link.href}
                   className={cn(
                     "relative text-[13px] tracking-[0.14em] uppercase transition-colors duration-200 font-medium",
-                    active
-                      ? "text-foreground"
-                      : "text-foreground/60 hover:text-foreground",
+                    onDark
+                      ? (active ? "text-[#f6f1e9]" : "text-[#f6f1e9]/65 hover:text-[#f6f1e9]")
+                      : (active ? "text-foreground" : "text-foreground/60 hover:text-foreground"),
                   )}
                 >
                   {link.label}
                   <span
                     className={cn(
-                      "absolute -bottom-1.5 left-0 h-px bg-[#b08842] transition-all duration-400 ease-out",
+                      "absolute -bottom-1.5 left-0 h-px transition-all duration-400",
+                      onDark ? "bg-[#d4b876]" : "bg-[#b08842]",
                       active ? "w-full" : "w-0",
                     )}
                     style={{ transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)" }}
@@ -104,7 +121,12 @@ export function LandingNav() {
           <div className="flex items-center gap-3">
             <a
               href="tel:+966503152119"
-              className="hidden lg:inline text-[13px] tracking-[0.14em] uppercase text-foreground/65 hover:text-foreground transition-colors duration-200 font-medium"
+              className={cn(
+                "hidden lg:inline text-[13px] tracking-[0.14em] uppercase transition-colors duration-200 font-medium",
+                onDark
+                  ? "text-[#f6f1e9]/65 hover:text-[#f6f1e9]"
+                  : "text-foreground/65 hover:text-foreground",
+              )}
             >
               +966 50 315 2119
             </a>
@@ -118,7 +140,10 @@ export function LandingNav() {
             </LuxuryButton>
 
             <button
-              className="md:hidden p-2 -mr-2 text-foreground"
+              className={cn(
+                "md:hidden p-2 -mr-2 transition-colors duration-200",
+                onDark ? "text-[#f6f1e9]" : "text-foreground",
+              )}
               onClick={() => setMobileOpen((v) => !v)}
               aria-label="Toggle menu"
             >

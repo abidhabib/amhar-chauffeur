@@ -49,9 +49,18 @@ export function ValueProps() {
   return (
     <section
       id="services"
-      className="relative py-32 lg:py-44 border-t border-foreground/[0.10]"
+      className="relative py-32 lg:py-44 bg-background"
     >
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+      {/* Top gradient transition from dark hero to ivory services */}
+      <div
+        aria-hidden
+        className="absolute top-0 left-0 right-0 h-32 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(180deg, #0f0c08 0%, rgba(15, 12, 8, 0.6) 40%, transparent 100%)",
+        }}
+      />
+      <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
         {/* Section header */}
         <Reveal className="max-w-3xl mb-20">
           <p className="text-eyebrow mb-6 flex items-center gap-3">
