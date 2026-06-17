@@ -58,3 +58,42 @@ Stage Summary:
 - Lint: clean (0 errors)
 - Browser-verified: body bg = ivory rgb(246,241,233), text = espresso rgb(26,22,18), #how section uses ivory text on charcoal gradient, modal stepper = 22px/600/espresso on cream, admin panel still uses dark theme via .dark wrapper
 - The site now reads as a polished luxury brand — light and inviting on the main flow, dramatic on the How-it-works and footer CTA, with consistent gold accents throughout
+
+---
+Task ID: polish-3
+Agent: main
+Task: Auto-scroll the Fleet section with a smooth infinite horizontal carousel + rebuild mobile menu as a fullscreen left-to-right drawer with smooth animation and close icon.
+
+Work Log:
+- FleetShowcase rebuilt using Framer Motion's useAnimationFrame for buttery 60fps infinite scroll
+- Duplicated the fleet list [...sorted, ...sorted] so the track can scroll seamlessly by half its width and reset with no visible jump
+- Speed: 38px/sec — premium, restrained pace (premium car showroom feel)
+- Pause-on-hover via React onMouseEnter/Leave — verified working with real cursor (X stayed constant for 3s during hover)
+- Track uses translate3d for GPU acceleration + will-change: transform
+- Edge fades (ivory gradients) on both left and right sides for a polished magazine feel
+- Status pill in the header shows "Auto-scrolling" (with gold ping dot) → "Paused" (with static dot) on hover
+- Removed the manual scroll buttons (no longer needed with auto-scroll)
+- CTA button moved to a separate full-width band below the carousel
+- Carousel is full-bleed (breaks out of max-w-7xl) for cinematic effect
+- Each card still has the original hover effects: image zoom 110% (1200ms), gradient overlay, gold "Request this vehicle" button with sheen-gold shimmer
+
+- Mobile nav completely rebuilt as a fullscreen drawer:
+  - AnimatePresence-wrapped for smooth enter/exit transitions
+  - Slides from x: -100% → x: 0 with 420ms cubic-bezier(0.16, 1, 0.3, 1) ease-out
+  - Fullscreen (fixed inset-0 z-[70]) — verified: covers entire viewport (390×844 on iPhone)
+  - Dark gradient background (charcoal to near-black) — luxury mood
+  - Top bar with AMHAR wordmark + prominent X close icon (w-11 h-11 hit area)
+  - Body: 4 nav links with staggered slide-in (60ms apart), 24px font-light tracking-tight, gold accent on active
+  - Each link has number badge (01, 02, 03, 04) + animated arrow on hover
+  - Footer: phone link + full-width gold "REQUEST A QUOTE" CTA
+  - Backdrop overlay with blur (z-[60]) — purely decorative since drawer is fullscreen
+  - Body scroll locked when drawer open (document.body.style.overflow = 'hidden')
+  - Close triggers: X button, backdrop click, nav link click (auto-closes), CTA click (auto-closes then opens booking modal after 350ms wait)
+
+Stage Summary:
+- Lint: clean (0 errors)
+- Browser-verified:
+  * Fleet auto-scroll: track X went from -3804 → -4489 over 3 seconds (smooth ~91px/sec motion)
+  * Pause-on-hover: track X stayed at -4955.72 for 3 seconds during real cursor hover (verified paused)
+  * Mobile drawer: opens fullscreen (390×844 verified), close button works, nav links auto-close drawer + smooth-scroll to section, booking CTA auto-closes drawer + opens booking modal
+  * All transitions use 420ms cubic-bezier(0.16, 1, 0.3, 1) — smooth, premium feel

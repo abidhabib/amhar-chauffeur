@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef } from "react";
-import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Users, Briefcase } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
+import { motion, useAnimationFrame } from "framer-motion";
+import { ArrowRight, Users, Briefcase } from "lucide-react";
 import { useBookingStore } from "@/stores/booking-store";
 import type { FleetWithFeatures } from "@/lib/dto/fleet.dto";
 import { CATEGORY_META, type VehicleCategory } from "@/lib/dto/lead.dto";
@@ -16,13 +16,9 @@ interface Props {
 const CATEGORY_ORDER: VehicleCategory[] = ["sedan", "suv", "van", "bus"];
 
 export function FleetShowcase({ fleet }: Props) {
-  const scrollRef = useRef<HTMLDivElement>(null);
   const openBooking = useBookingStore((s) => s.openModal);
 
-  const scrollBy = (delta: number) => {
-    scrollRef.current?.scrollBy({ left: delta, behavior: "smooth" });
-  };
-
+  // Sort: by category order, then displayOrder
   const sorted = [...fleet].sort((a, b) => {
     const ai = CATEGORY_ORDER.indexOf(a.category as VehicleCategory);
     const bi = CATEGORY_ORDER.indexOf(b.category as VehicleCategory);
@@ -30,10 +26,49 @@ export function FleetShowcase({ fleet }: Props) {
     return a.displayOrder - b.displayOrder;
   });
 
+  // Duplicate the list so the track can scroll infinitely without a visible jump
+  const loopItems = [...sorted, ...sorted];
+
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [paused, setPaused] = useState(false);
+  const xRef = useRef(0);
+
+  // Measure half-width (one full set) for the seamless loop
+  const halfWidthRef = useRef(0);
+  useEffect(() => {
+    const measure = () => {
+      if (trackRef.current) {
+        // Total scrollWidth includes both sets — half is one set + gaps
+        halfWidthRef.current = trackRef.current.scrollWidth / 2;
+      }
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    // Re-measure after images load
+    const t = setTimeout(measure, 500);
+    return () => {
+      window.removeEventListener("resize", measure);
+      clearTimeout(t);
+    };
+  }, [sorted.length]);
+
+  // Smooth animation loop — advances ~38px/sec, pauses on hover
+  useAnimationFrame((_, delta) => {
+    if (paused || !trackRef.current || halfWidthRef.current === 0) return;
+    // delta is in ms; convert to a per-second speed
+    const speed = 38; // px per second — slow, premium
+    xRef.current += (speed * delta) / 1000;
+    // Seamless reset when we've scrolled exactly one set width
+    if (xRef.current >= halfWidthRef.current) {
+      xRef.current -= halfWidthRef.current;
+    }
+    trackRef.current.style.transform = `translate3d(${-xRef.current}px, 0, 0)`;
+  });
+
   return (
     <section
       id="fleet"
-      className="py-32 lg:py-44 border-t border-foreground/[0.10] bg-[#efe8dc]/40"
+      className="py-32 lg:py-44 border-t border-foreground/[0.10] bg-[#efe8dc]/40 overflow-hidden"
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         {/* Header */}
@@ -51,47 +86,65 @@ export function FleetShowcase({ fleet }: Props) {
             <p className="text-body-lg max-w-lg">
               Every car in our fleet earns its place. Curated for comfort,
               maintained to manufacturer specification, and presented immaculately
-              for every journey.
+              for every journey. Hover to pause the showcase.
             </p>
           </div>
 
-          {/* Scroll controls */}
-          <div className="hidden md:flex items-center gap-3">
-            <button
-              onClick={() => scrollBy(-440)}
-              className="w-14 h-14 rounded-sm border border-foreground/20 flex items-center justify-center text-foreground/75 hover:border-[#b08842] hover:text-[#b08842] hover:bg-[#b08842]/[0.06] transition-all duration-300"
-              aria-label="Previous vehicles"
-            >
-              <ArrowLeft size={18} strokeWidth={1.5} />
-            </button>
-            <button
-              onClick={() => scrollBy(440)}
-              className="w-14 h-14 rounded-sm border border-foreground/20 flex items-center justify-center text-foreground/75 hover:border-[#b08842] hover:text-[#b08842] hover:bg-[#b08842]/[0.06] transition-all duration-300"
-              aria-label="Next vehicles"
-            >
-              <ArrowRight size={18} strokeWidth={1.5} />
-            </button>
+          {/* Status pill — auto-scrolling indicator */}
+          <div className="hidden md:flex items-center gap-2.5 px-4 py-2.5 rounded-full border border-foreground/15 bg-card">
+            <span className="relative flex w-2 h-2">
+              <span
+                className={`absolute inset-0 rounded-full ${paused ? "bg-foreground/40" : "bg-[#b08842]"}`}
+              />
+              {!paused && (
+                <span className="absolute inset-0 rounded-full bg-[#b08842] animate-ping opacity-60" />
+              )}
+            </span>
+            <span className="text-[11px] tracking-[0.20em] uppercase text-foreground/65 font-semibold">
+              {paused ? "Paused" : "Auto-scrolling"}
+            </span>
           </div>
         </Reveal>
+      </div>
 
-        {/* Horizontal scroll */}
+      {/* Auto-scrolling track — full-bleed (breaks out of max-w-7xl) */}
+      <div
+        className="relative"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+      >
+        {/* Left edge fade — ivory */}
         <div
-          ref={scrollRef}
-          className="flex gap-7 overflow-x-auto scrollbar-none pb-4 -mx-6 px-6 lg:-mx-10 lg:px-10 snap-x snap-mandatory"
+          aria-hidden
+          className="absolute left-0 top-0 bottom-0 z-10 w-16 sm:w-32 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(90deg, #efe8dc 0%, rgba(239, 232, 220, 0.6) 60%, transparent 100%)",
+          }}
+        />
+        {/* Right edge fade */}
+        <div
+          aria-hidden
+          className="absolute right-0 top-0 bottom-0 z-10 w-16 sm:w-32 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(270deg, #efe8dc 0%, rgba(239, 232, 220, 0.6) 60%, transparent 100%)",
+          }}
+        />
+
+        {/* The track — flex, duplicated content for seamless loop */}
+        <div
+          ref={trackRef}
+          className="flex gap-7 will-change-transform"
+          style={{ width: "max-content" }}
         >
-          {sorted.map((v, i) => {
+          {loopItems.map((v, i) => {
             const cat = v.category as VehicleCategory;
+            // Use a stable key combining original id + duplicate index
+            const key = `${v.id}-${i}`;
             return (
-              <motion.button
-                key={v.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{
-                  duration: 0.6,
-                  delay: Math.min(i * 0.05, 0.3),
-                  ease: [0.16, 1, 0.3, 1],
-                }}
+              <button
+                key={key}
                 onClick={() =>
                   openBooking({
                     category: cat,
@@ -99,7 +152,8 @@ export function FleetShowcase({ fleet }: Props) {
                     vehicleName: v.name,
                   })
                 }
-                className="group flex-shrink-0 w-[320px] md:w-[360px] snap-start text-left"
+                className="group flex-shrink-0 w-[300px] md:w-[360px] text-left"
+                aria-label={`Request ${v.name}`}
               >
                 {/* Image card */}
                 <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-foreground/[0.04] mb-6 border border-foreground/[0.08] group-hover:border-[#b08842]/40 group-hover:shadow-[0_30px_60px_-25px_rgba(26,22,18,0.25)] transition-all duration-500">
@@ -108,6 +162,7 @@ export function FleetShowcase({ fleet }: Props) {
                       src={v.imageUrl}
                       alt={v.name}
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
+                      loading="lazy"
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -124,7 +179,7 @@ export function FleetShowcase({ fleet }: Props) {
                       {CATEGORY_META[cat]?.label ?? v.category}
                     </span>
                   </div>
-                  {/* Vehicle name on image — visible on hover */}
+                  {/* "Request this vehicle" gold button — slides up on hover */}
                   <div className="absolute bottom-5 left-5 right-5 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-400">
                     <div className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-[#d4b876] to-[#b08842] text-[#1a1612] rounded-sm text-[11px] tracking-[0.20em] uppercase font-bold sheen-gold">
                       Request this vehicle
@@ -152,13 +207,15 @@ export function FleetShowcase({ fleet }: Props) {
                     </span>
                   </div>
                 </div>
-              </motion.button>
+              </button>
             );
           })}
         </div>
+      </div>
 
-        {/* CTA */}
-        <Reveal delay={200} className="mt-16 flex justify-center">
+      {/* CTA — full-width band below the carousel */}
+      <div className="mx-auto max-w-7xl px-6 lg:px-10 mt-16">
+        <Reveal delay={200} className="flex justify-center">
           <LuxuryButton
             size="lg"
             variant="solid-dark"
