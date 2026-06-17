@@ -36,7 +36,6 @@ yarn-error.log*
 # vercel
 .vercel
 
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -50,5 +49,30 @@ test
 prompt
 
 server.log
-# Skills directory
+
+# Skills directory (sandbox-only)
 /skills/
+
+# Database (local SQLite — each developer runs `bun run db:push` to create)
+/db/
+*.db
+*.db-journal
+
+# Downloaded assets / research files (sandbox-only)
+/download/
+
+# Sandbox dev orchestration scripts (not part of the project)
+/.zscripts/
+
+# Sandbox demo files (not part of AMHAR)
+/examples/
+/mini-services/
+
+# Root research JSON files (not part of the project)
+/amharksa_*.json
+
+# Worklog (internal session log)
+/worklog.md
+
+# OS files
+Thumbs.db
