@@ -1,9 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, ArrowDown } from "lucide-react";
 import { useBookingStore } from "@/stores/booking-store";
 import { LuxuryButton } from "@/components/shared/luxury-button";
+import { useRef } from "react";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -20,25 +21,43 @@ const fadeUp = {
 
 export function LandingHero() {
   const openBooking = useBookingStore((s) => s.openModal);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Parallax: background image drifts slower than foreground as user scrolls
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const bgOpacity = useTransform(scrollYProgress, [0, 0.85], [0.35, 0]);
+  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
 
   return (
     <section
+      ref={sectionRef}
       id="top"
       className="relative min-h-[100svh] bg-cinematic texture-noise overflow-hidden"
     >
-      {/* Background image — luxury car silhouette, dark, subtle */}
-      <div className="absolute inset-0 z-0">
+      {/* Background image — luxury car silhouette, dark, with parallax */}
+      <motion.div
+        className="absolute inset-0 z-0"
+        style={{ y: bgY, opacity: bgOpacity }}
+      >
         <img
           src="https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=2400&q=80"
           alt=""
-          className="w-full h-full object-cover opacity-30"
+          className="w-full h-[120%] object-cover"
           aria-hidden
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/70 to-background" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-transparent" />
-      </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/65 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/30 to-transparent" />
+      </motion.div>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-10 pt-40 pb-32 min-h-[100svh] flex flex-col justify-center">
+      <motion.div
+        className="relative z-10 mx-auto max-w-7xl px-6 lg:px-10 pt-40 pb-32 min-h-[100svh] flex flex-col justify-center"
+        style={{ y: contentY, opacity: contentOpacity }}
+      >
         <div className="max-w-3xl">
           <motion.p
             custom={0}
@@ -84,6 +103,7 @@ export function LandingHero() {
             <LuxuryButton
               size="lg"
               variant="solid-gold"
+              magnetic
               onClick={() => openBooking()}
             >
               Request a Quote
@@ -92,6 +112,7 @@ export function LandingHero() {
             <LuxuryButton
               size="lg"
               variant="outline"
+              magnetic
               onClick={() => {
                 document
                   .getElementById("fleet")
@@ -108,7 +129,7 @@ export function LandingHero() {
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            className="mt-20 pt-8 border-t border-foreground/[0.06] grid grid-cols-3 gap-6 max-w-xl"
+            className="mt-20 pt-8 border-t border-foreground/[0.10] grid grid-cols-3 gap-6 max-w-xl"
           >
             {[
               { value: "24/7", label: "Concierge" },
@@ -116,27 +137,32 @@ export function LandingHero() {
               { value: "100%", label: "Verified Drivers" },
             ].map((s) => (
               <div key={s.label}>
-                <div className="text-[28px] font-light text-foreground mb-1">
+                <div className="text-[32px] font-light text-foreground mb-1.5 tabular-nums">
                   {s.value}
                 </div>
-                <div className="text-[10px] tracking-[0.2em] uppercase text-foreground/50">
+                <div className="text-[10px] tracking-[0.2em] uppercase text-foreground/60 font-medium">
                   {s.label}
                 </div>
               </div>
             ))}
           </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Scroll cue */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.2, duration: 0.8 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-foreground/40"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-foreground/55"
       >
-        <span className="text-[10px] tracking-[0.24em] uppercase">Scroll</span>
-        <ArrowDown size={12} className="animate-pulse" />
+        <span className="text-[10px] tracking-[0.24em] uppercase font-medium">Scroll</span>
+        <motion.div
+          animate={{ y: [0, 6, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <ArrowDown size={12} />
+        </motion.div>
       </motion.div>
     </section>
   );

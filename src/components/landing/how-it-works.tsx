@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { Reveal } from "@/components/shared/reveal";
 
 const STEPS = [
   {
@@ -27,47 +27,40 @@ export function HowItWorks() {
   return (
     <section
       id="how"
-      className="py-32 lg:py-40 border-t border-foreground/[0.06] bg-foreground/[0.015]"
+      className="py-32 lg:py-40 border-t border-foreground/[0.08] bg-foreground/[0.02]"
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <div className="max-w-3xl mb-20">
+        <Reveal className="max-w-3xl mb-20">
           <p className="text-eyebrow mb-6">How it works</p>
           <h2 className="text-headline text-foreground mb-6">
             Three steps.
             <br />
-            <span className="text-foreground/40">No friction.</span>
+            <span className="text-foreground/45">No friction.</span>
           </h2>
-        </div>
+        </Reveal>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-20">
           {STEPS.map((s, i) => (
-            <motion.div
+            <Reveal
               key={s.number}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{
-                duration: 0.6,
-                delay: i * 0.12,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="relative"
+              delay={i * 140}
+              className="relative group"
             >
               {/* Connector line */}
               {i < STEPS.length - 1 && (
-                <div className="hidden md:block absolute top-6 left-[40%] right-[-20%] h-px bg-gradient-to-r from-foreground/15 to-transparent" />
+                <div className="hidden md:block absolute top-7 left-[42%] right-[-20%] h-px bg-gradient-to-r from-[#c9a961]/30 via-foreground/10 to-transparent" />
               )}
 
-              <div className="text-[44px] font-light text-[#c9a961] mb-8 leading-none">
+              <div className="text-[52px] font-light text-[#c9a961] mb-8 leading-none tabular-nums transition-transform duration-500 group-hover:scale-105 origin-left">
                 {s.number}
               </div>
-              <h3 className="text-[20px] font-medium text-foreground mb-4 tracking-tight">
+              <h3 className="text-[21px] font-medium text-foreground mb-4 tracking-tight">
                 {s.title}
               </h3>
-              <p className="text-[14px] leading-relaxed text-foreground/55 font-light">
+              <p className="text-[14.5px] leading-relaxed text-foreground/70 font-normal">
                 {s.description}
               </p>
-            </motion.div>
+            </Reveal>
           ))}
         </div>
       </div>

@@ -11,6 +11,7 @@ import { Testimonials } from "@/components/landing/testimonials";
 import { LandingFooter } from "@/components/landing/footer";
 import { BookingModal } from "@/components/booking/booking-modal";
 import { AdminShell } from "@/components/admin/admin-shell";
+import { CursorGlow } from "@/components/shared/cursor-glow";
 import type { FleetWithFeatures } from "@/lib/dto/fleet.dto";
 
 interface Review {
@@ -47,6 +48,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <CursorGlow />
       <LandingNav />
       <main className="flex-1">
         <LandingHero />

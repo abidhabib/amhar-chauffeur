@@ -7,6 +7,7 @@ import { useBookingStore } from "@/stores/booking-store";
 import type { FleetWithFeatures } from "@/lib/dto/fleet.dto";
 import { CATEGORY_META, type VehicleCategory } from "@/lib/dto/lead.dto";
 import { LuxuryButton } from "@/components/shared/luxury-button";
+import { Reveal } from "@/components/shared/reveal";
 
 interface Props {
   fleet: FleetWithFeatures[];
@@ -22,7 +23,6 @@ export function FleetShowcase({ fleet }: Props) {
     scrollRef.current?.scrollBy({ left: delta, behavior: "smooth" });
   };
 
-  // Sort: by category order, then displayOrder
   const sorted = [...fleet].sort((a, b) => {
     const ai = CATEGORY_ORDER.indexOf(a.category as VehicleCategory);
     const bi = CATEGORY_ORDER.indexOf(b.category as VehicleCategory);
@@ -31,16 +31,16 @@ export function FleetShowcase({ fleet }: Props) {
   });
 
   return (
-    <section id="fleet" className="py-32 lg:py-40 border-t border-foreground/[0.06]">
+    <section id="fleet" className="py-32 lg:py-40 border-t border-foreground/[0.08]">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-16">
+        <Reveal className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-16">
           <div className="max-w-2xl">
             <p className="text-eyebrow mb-6">The Fleet</p>
             <h2 className="text-headline text-foreground mb-6">
               Vehicles, chosen with
               <br />
-              <span className="text-foreground/40">deliberation.</span>
+              <span className="text-foreground/45">deliberation.</span>
             </h2>
             <p className="text-body-lg max-w-lg">
               Every car in our fleet earns its place. Curated for comfort,
@@ -53,20 +53,20 @@ export function FleetShowcase({ fleet }: Props) {
           <div className="hidden md:flex items-center gap-3">
             <button
               onClick={() => scrollBy(-420)}
-              className="w-12 h-12 rounded-sm border border-foreground/15 flex items-center justify-center text-foreground/70 hover:border-foreground/40 hover:text-foreground transition-all duration-300"
+              className="w-12 h-12 rounded-sm border border-foreground/15 flex items-center justify-center text-foreground/75 hover:border-[#c9a961]/50 hover:text-[#c9a961] hover:bg-[#c9a961]/[0.05] transition-all duration-300"
               aria-label="Previous vehicles"
             >
               <ArrowLeft size={16} strokeWidth={1.5} />
             </button>
             <button
               onClick={() => scrollBy(420)}
-              className="w-12 h-12 rounded-sm border border-foreground/15 flex items-center justify-center text-foreground/70 hover:border-foreground/40 hover:text-foreground transition-all duration-300"
+              className="w-12 h-12 rounded-sm border border-foreground/15 flex items-center justify-center text-foreground/75 hover:border-[#c9a961]/50 hover:text-[#c9a961] hover:bg-[#c9a961]/[0.05] transition-all duration-300"
               aria-label="Next vehicles"
             >
               <ArrowRight size={16} strokeWidth={1.5} />
             </button>
           </div>
-        </div>
+        </Reveal>
 
         {/* Horizontal scroll */}
         <div
@@ -76,7 +76,7 @@ export function FleetShowcase({ fleet }: Props) {
           {sorted.map((v, i) => {
             const cat = v.category as VehicleCategory;
             return (
-              <motion.div
+              <motion.button
                 key={v.id}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -86,76 +86,82 @@ export function FleetShowcase({ fleet }: Props) {
                   delay: Math.min(i * 0.05, 0.3),
                   ease: [0.16, 1, 0.3, 1],
                 }}
-                className="group flex-shrink-0 w-[300px] md:w-[340px] snap-start"
+                onClick={() =>
+                  openBooking({
+                    category: cat,
+                    vehicleId: v.id,
+                    vehicleName: v.name,
+                  })
+                }
+                className="group flex-shrink-0 w-[300px] md:w-[340px] snap-start text-left"
               >
-                <button
-                  onClick={() =>
-                    openBooking({
-                      category: cat,
-                      vehicleId: v.id,
-                      vehicleName: v.name,
-                    })
-                  }
-                  className="block w-full text-left"
-                >
-                  {/* Image */}
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-foreground/[0.04] mb-5">
-                    {v.imageUrl ? (
-                      <img
-                        src={v.imageUrl}
-                        alt={v.name}
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-[10px] tracking-[0.24em] uppercase text-foreground/30">
-                          {v.brand}
-                        </span>
-                      </div>
-                    )}
-                    <div className="absolute top-4 left-4">
-                      <span className="inline-block px-2.5 py-1 bg-background/80 backdrop-blur-sm text-[9px] tracking-[0.2em] uppercase text-foreground/70">
-                        {CATEGORY_META[cat]?.label ?? v.category}
+                {/* Image */}
+                <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-foreground/[0.04] mb-5 border border-foreground/[0.06] group-hover:border-[#c9a961]/30 transition-colors duration-300">
+                  {v.imageUrl ? (
+                    <img
+                      src={v.imageUrl}
+                      alt={v.name}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-[10px] tracking-[0.24em] uppercase text-foreground/40">
+                        {v.brand}
                       </span>
                     </div>
+                  )}
+                  {/* Gradient overlay on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute top-4 left-4">
+                    <span className="inline-block px-2.5 py-1 bg-background/85 backdrop-blur-sm text-[9px] tracking-[0.2em] uppercase text-foreground/80 font-medium rounded-sm">
+                      {CATEGORY_META[cat]?.label ?? v.category}
+                    </span>
                   </div>
+                  {/* "Request" overlay button — appears on hover */}
+                  <div className="absolute bottom-4 left-4 right-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out">
+                    <div className="inline-flex items-center gap-2 px-3 py-2 bg-[#c9a961] text-[#0a0a0b] rounded-sm text-[10px] tracking-[0.18em] uppercase font-semibold">
+                      Request this vehicle
+                      <ArrowRight size={11} strokeWidth={2.5} />
+                    </div>
+                  </div>
+                </div>
 
-                  {/* Info */}
-                  <div className="px-1">
-                    <p className="text-[10px] tracking-[0.2em] uppercase text-foreground/40 mb-2">
-                      {v.brand}
-                    </p>
-                    <h3 className="text-[18px] font-medium text-foreground mb-4 tracking-tight">
-                      {v.name}
-                    </h3>
-                    <div className="flex items-center gap-5 text-[12px] text-foreground/55">
-                      <span className="flex items-center gap-1.5">
-                        <Users size={13} strokeWidth={1.5} />
-                        {v.seats} seats
-                      </span>
-                      <span className="flex items-center gap-1.5">
-                        <Briefcase size={13} strokeWidth={1.5} />
-                        {v.luggage} luggage
-                      </span>
-                    </div>
+                {/* Info */}
+                <div className="px-1">
+                  <p className="text-[10px] tracking-[0.2em] uppercase text-foreground/50 mb-2 font-medium">
+                    {v.brand}
+                  </p>
+                  <h3 className="text-[18px] font-medium text-foreground mb-4 tracking-tight group-hover:text-[#c9a961] transition-colors duration-300">
+                    {v.name}
+                  </h3>
+                  <div className="flex items-center gap-5 text-[12px] text-foreground/65 font-medium">
+                    <span className="flex items-center gap-1.5">
+                      <Users size={13} strokeWidth={1.5} />
+                      {v.seats} seats
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Briefcase size={13} strokeWidth={1.5} />
+                      {v.luggage} luggage
+                    </span>
                   </div>
-                </button>
-              </motion.div>
+                </div>
+              </motion.button>
             );
           })}
         </div>
 
         {/* CTA */}
-        <div className="mt-16 flex justify-center">
+        <Reveal delay={200} className="mt-16 flex justify-center">
           <LuxuryButton
             size="lg"
             variant="outline"
+            magnetic
             onClick={() => openBooking()}
           >
             Request a Quote for Any Vehicle
             <ArrowRight size={14} strokeWidth={2} />
           </LuxuryButton>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

@@ -141,20 +141,28 @@ export function BookingModal() {
         {/* Close button — top right */}
         <button
           onClick={() => onOpenChange(false)}
-          className="absolute top-5 right-5 z-20 w-9 h-9 flex items-center justify-center text-foreground/50 hover:text-foreground transition-colors"
+          className="absolute top-5 right-5 z-20 w-9 h-9 flex items-center justify-center text-foreground/65 hover:text-foreground hover:bg-foreground/[0.06] rounded-sm transition-all duration-200"
           aria-label="Close"
         >
           <X size={18} strokeWidth={1.5} />
         </button>
 
         {/* Modal header — luxury header bar */}
-        <div className="px-8 pt-9 pb-6 border-b border-foreground/[0.06]">
-          <p className="text-eyebrow mb-3">Request a Quote</p>
-          <h2 className="text-[24px] font-light text-foreground tracking-tight">
+        <div className="px-8 pt-9 pb-6 border-b border-foreground/[0.08] relative">
+          {/* Subtle gold gradient accent in top-right of header */}
+          <div
+            aria-hidden
+            className="absolute top-0 right-0 w-40 h-40 opacity-30 pointer-events-none"
+            style={{
+              background: "radial-gradient(circle at 100% 0%, color-mix(in oklch, var(--gold) 18%, transparent) 0%, transparent 60%)",
+            }}
+          />
+          <p className="text-eyebrow mb-3 relative">Request a Quote</p>
+          <h2 className="text-[24px] font-normal text-foreground tracking-tight relative">
             {submittedRef ? "Request received" : "Tell us about your journey"}
           </h2>
           {!submittedRef && (
-            <p className="text-[12px] text-foreground/50 mt-2 font-light">
+            <p className="text-[12.5px] text-foreground/70 mt-2 font-normal relative">
               No payment required. We respond via WhatsApp within minutes.
             </p>
           )}
@@ -342,17 +350,23 @@ function StepVehicle({
               <button
                 key={c}
                 onClick={() => update("vehicleCategory", c)}
-                className={`p-4 text-left rounded-sm border transition-all duration-250 ${
+                className={`relative p-4 text-left rounded-sm border transition-all duration-300 overflow-hidden group ${
                   selected
-                    ? "border-[#c9a961] bg-[#c9a961]/[0.06]"
-                    : "border-foreground/10 hover:border-foreground/30"
+                    ? "border-[#c9a961] bg-[#c9a961]/[0.08]"
+                    : "border-foreground/[0.12] hover:border-foreground/30 bg-foreground/[0.02]"
                 }`}
                 style={{ transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)" }}
               >
-                <div className={`text-[13px] font-medium mb-1 ${selected ? "text-[#c9a961]" : "text-foreground"}`}>
+                {/* Selected check mark */}
+                {selected && (
+                  <span className="absolute top-3 right-3 w-4 h-4 rounded-full bg-[#c9a961] flex items-center justify-center">
+                    <Check size={9} strokeWidth={3} className="text-[#0a0a0b]" />
+                  </span>
+                )}
+                <div className={`text-[13px] font-medium mb-1 transition-colors duration-300 ${selected ? "text-[#c9a961]" : "text-foreground group-hover:text-foreground"}`}>
                   {meta.label}
                 </div>
-                <div className="text-[11px] text-foreground/50 font-light leading-snug">
+                <div className="text-[11px] text-foreground/55 font-normal leading-snug">
                   {meta.description}
                 </div>
               </button>
@@ -589,7 +603,7 @@ function Field({
   return (
     <div>
       <label className="text-eyebrow-muted flex items-center gap-2 mb-3">
-        {icon && <span className="text-foreground/50">{icon}</span>}
+        {icon && <span className="text-foreground/70">{icon}</span>}
         {label}
       </label>
       {children}
@@ -615,14 +629,14 @@ function StepperField({
   return (
     <div>
       <label className="text-eyebrow-muted flex items-center gap-2 mb-3">
-        <span className="text-foreground/50">{icon}</span>
+        <span className="text-foreground/65">{icon}</span>
         {label}
       </label>
-      <div className="flex items-center h-11 border border-foreground/10 rounded-sm">
+      <div className="flex items-center h-14 border border-foreground/[0.12] rounded-sm bg-foreground/[0.02] hover:border-foreground/25 transition-colors duration-200">
         <button
           onClick={() => onChange(Math.max(min, value - 1))}
           disabled={value <= min}
-          className="w-11 h-full flex items-center justify-center text-foreground/60 hover:text-foreground disabled:opacity-30 transition-colors"
+          className="w-12 h-full flex items-center justify-center text-foreground/65 hover:text-[#c9a961] hover:bg-foreground/[0.04] disabled:opacity-25 disabled:hover:bg-transparent disabled:hover:text-foreground/65 transition-all duration-200 text-[20px] font-light"
           aria-label={`Decrease ${label}`}
         >
           −
@@ -634,12 +648,12 @@ function StepperField({
             const v = parseInt(e.target.value, 10);
             if (!isNaN(v)) onChange(Math.max(min, Math.min(max, v)));
           }}
-          className="flex-1 h-full bg-transparent text-center text-[14px] font-medium text-foreground focus:outline-none border-x border-foreground/10"
+          className="amhar-stepper-input flex-1 h-full bg-transparent text-center text-[20px] font-medium text-foreground focus:outline-none border-x border-foreground/[0.12] tabular-nums"
         />
         <button
           onClick={() => onChange(Math.min(max, value + 1))}
           disabled={value >= max}
-          className="w-11 h-full flex items-center justify-center text-foreground/60 hover:text-foreground disabled:opacity-30 transition-colors"
+          className="w-12 h-full flex items-center justify-center text-foreground/65 hover:text-[#c9a961] hover:bg-foreground/[0.04] disabled:opacity-25 disabled:hover:bg-transparent disabled:hover:text-foreground/65 transition-all duration-200 text-[20px] font-light"
           aria-label={`Increase ${label}`}
         >
           +
