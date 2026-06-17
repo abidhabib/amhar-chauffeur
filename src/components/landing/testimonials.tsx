@@ -23,43 +23,46 @@ export function Testimonials({ reviews, average, count }: Props) {
   return (
     <section
       id="testimonials"
-      className="py-32 lg:py-40 border-t border-foreground/[0.08]"
+      className="py-32 lg:py-44 border-t border-foreground/[0.10]"
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <Reveal className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-16">
           <div className="max-w-2xl">
-            <p className="text-eyebrow mb-6">Client Voices</p>
-            <h2 className="text-headline text-foreground mb-6">
+            <p className="text-eyebrow mb-6 flex items-center gap-3">
+              <span className="w-8 h-px bg-[#b08842]" />
+              Client Voices
+            </p>
+            <h2 className="text-headline text-foreground mb-7">
               Trusted, repeatedly,
               <br />
-              <span className="text-foreground/45">by those who travel often.</span>
+              <span className="text-foreground/40">by those who travel often.</span>
             </h2>
           </div>
 
           {/* Aggregate rating */}
-          <div className="flex items-center gap-4 px-5 py-4 rounded-sm border border-foreground/[0.10] bg-foreground/[0.02]">
+          <div className="flex items-center gap-4 px-6 py-5 rounded-sm border border-foreground/[0.12] bg-card">
             <div className="flex items-center gap-1">
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star
                   key={i}
-                  size={15}
+                  size={17}
                   className={
                     i < Math.round(average)
-                      ? "fill-[#c9a961] text-[#c9a961]"
+                      ? "fill-[#b08842] text-[#b08842]"
                       : "text-foreground/20"
                   }
                 />
               ))}
             </div>
-            <div className="text-[14px] text-foreground/80 font-medium">
-              <span className="font-semibold text-foreground">{average.toFixed(1)}</span>
+            <div className="text-[15px] text-foreground/80 font-medium">
+              <span className="font-bold text-foreground text-[18px]">{average.toFixed(1)}</span>
               <span className="text-foreground/55"> · {count} reviews</span>
             </div>
           </div>
         </Reveal>
 
         {reviews.length === 0 ? (
-          <div className="py-16 text-center text-foreground/50 text-[14px]">
+          <div className="py-16 text-center text-foreground/50 text-[15px]">
             Client testimonials will appear here once approved.
           </div>
         ) : (
@@ -68,33 +71,33 @@ export function Testimonials({ reviews, average, count }: Props) {
               <Reveal
                 key={r.id}
                 delay={Math.min(i * 80, 400)}
-                className="surface-luxury p-7 flex flex-col gap-5 group"
+                className="surface-luxury p-8 flex flex-col gap-5 group"
               >
                 <div className="flex items-center justify-between">
-                  <Quote size={22} className="text-[#c9a961]" strokeWidth={1.5} />
+                  <Quote size={26} className="text-[#b08842]" strokeWidth={1.5} />
                   <div className="flex items-center gap-0.5">
                     {Array.from({ length: 5 }).map((_, si) => (
                       <Star
                         key={si}
-                        size={10}
+                        size={11}
                         className={
                           si < r.rating
-                            ? "fill-[#c9a961] text-[#c9a961]"
+                            ? "fill-[#b08842] text-[#b08842]"
                             : "text-foreground/20"
                         }
                       />
                     ))}
                   </div>
                 </div>
-                <blockquote className="text-[14px] leading-relaxed text-foreground/85 font-normal flex-1">
+                <blockquote className="text-[15px] leading-relaxed text-foreground/85 font-normal flex-1">
                   {r.body}
                 </blockquote>
-                <figcaption className="pt-5 border-t border-foreground/[0.08]">
-                  <div className="text-[13px] font-medium text-foreground">
+                <figcaption className="pt-5 border-t border-foreground/[0.10]">
+                  <div className="text-[14px] font-semibold text-foreground">
                     {r.clientName}
                   </div>
                   {r.clientTitle && (
-                    <div className="text-[11px] text-foreground/55 mt-0.5">
+                    <div className="text-[12px] text-foreground/55 mt-1 font-medium">
                       {r.clientTitle}
                     </div>
                   )}

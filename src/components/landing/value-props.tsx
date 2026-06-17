@@ -49,16 +49,19 @@ export function ValueProps() {
   return (
     <section
       id="services"
-      className="relative py-32 lg:py-40 border-t border-foreground/[0.08]"
+      className="relative py-32 lg:py-44 border-t border-foreground/[0.10]"
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         {/* Section header */}
         <Reveal className="max-w-3xl mb-20">
-          <p className="text-eyebrow mb-6">Our Services</p>
-          <h2 className="text-headline text-foreground mb-6">
+          <p className="text-eyebrow mb-6 flex items-center gap-3">
+            <span className="w-8 h-px bg-[#b08842]" />
+            Our Services
+          </p>
+          <h2 className="text-headline text-foreground mb-7">
             Considered transportation,
             <br />
-            <span className="text-foreground/45">for every occasion.</span>
+            <span className="text-foreground/40">for every occasion.</span>
           </h2>
           <p className="text-body-lg max-w-xl">
             Six core services, each refined over thousands of journeys. Every
@@ -68,40 +71,39 @@ export function ValueProps() {
         </Reveal>
 
         {/* Service grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-foreground/[0.08] border border-foreground/[0.08]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-foreground/[0.10] border border-foreground/[0.10] rounded-sm overflow-hidden">
           {SERVICES.map((s, i) => {
             const Icon = s.icon;
             return (
               <Reveal
                 key={s.title}
-                delay={Math.min(i * 60, 360)}
-                className="bg-background hover:bg-foreground/[0.025] cursor-pointer transition-colors duration-300 group relative"
+                delay={Math.min(i * 70, 420)}
+                className="bg-card hover:bg-[#fffdf8] cursor-pointer transition-colors duration-400 group relative"
               >
-                <div className="p-8 lg:p-10 h-full flex flex-col">
-                  <div className="flex items-start justify-between mb-8">
-                    <div className="w-12 h-12 flex items-center justify-center rounded-sm border border-foreground/12 text-foreground/75 group-hover:border-[#c9a961]/50 group-hover:text-[#c9a961] group-hover:bg-[#c9a961]/[0.06] transition-all duration-300">
-                      <Icon size={18} strokeWidth={1.5} />
+                <div className="p-9 lg:p-11 h-full flex flex-col">
+                  <div className="flex items-start justify-between mb-9">
+                    <div className="w-14 h-14 flex items-center justify-center rounded-sm border border-foreground/15 text-foreground/75 group-hover:border-[#b08842]/60 group-hover:text-[#b08842] group-hover:bg-[#b08842]/[0.08] group-hover:shadow-[0_8px_24px_-8px_rgba(176,136,66,0.3)] transition-all duration-400">
+                      <Icon size={20} strokeWidth={1.5} />
                     </div>
-                    <span className="text-[10px] tracking-[0.2em] text-foreground/40 font-medium">
+                    <span className="text-[11px] tracking-[0.22em] text-foreground/45 font-semibold">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                   </div>
-                  <h3 className="text-[19px] font-medium text-foreground mb-3 tracking-tight">
+                  <h3 className="text-[21px] font-semibold text-foreground mb-4 tracking-tight">
                     {s.title}
                   </h3>
-                  <p className="text-[14px] leading-relaxed text-foreground/70 font-normal flex-1">
+                  <p className="text-[15px] leading-relaxed text-foreground/70 font-normal flex-1">
                     {s.description}
                   </p>
-                  {/* "Learn more" gold underline reveal */}
                   <button
                     onClick={() => openBooking()}
-                    className="mt-6 inline-flex items-center gap-2 text-[11px] tracking-[0.16em] uppercase text-foreground/55 group-hover:text-[#c9a961] transition-colors duration-300 self-start font-medium"
+                    className="mt-7 inline-flex items-center gap-2.5 text-[12px] tracking-[0.18em] uppercase text-foreground/60 group-hover:text-[#b08842] transition-colors duration-300 self-start font-semibold"
                   >
                     <span className="gold-underline">Request this service</span>
                     <ArrowRight
-                      size={11}
-                      strokeWidth={2}
-                      className="transition-transform duration-300 group-hover:translate-x-1"
+                      size={12}
+                      strokeWidth={2.5}
+                      className="transition-transform duration-400 group-hover:translate-x-1.5"
                     />
                   </button>
                 </div>

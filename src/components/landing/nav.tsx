@@ -26,7 +26,6 @@ export function LandingNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Scroll spy — track which section is in view
   useEffect(() => {
     const sections = NAV_LINKS.map((l) => document.querySelector(l.href)).filter(
       Boolean,
@@ -51,30 +50,31 @@ export function LandingNav() {
   return (
     <header
       className={cn(
-        "fixed top-0 inset-x-0 z-50 transition-all duration-300 ease-out",
+        "fixed top-0 inset-x-0 z-50 transition-all duration-400 ease-out",
         scrolled
-          ? "bg-background/85 backdrop-blur-xl border-b border-foreground/[0.08]"
+          ? "bg-background/85 backdrop-blur-xl border-b border-foreground/[0.10] py-0"
           : "bg-transparent border-b border-transparent",
       )}
+      style={{ transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)" }}
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <div className="flex items-center justify-between h-20">
           {/* Wordmark */}
           <a
             href="#top"
-            className="flex items-center gap-2.5 group"
+            className="flex items-center gap-3 group"
             aria-label="AMHAR home"
           >
-            <span className="text-[15px] font-semibold tracking-[0.32em] text-foreground transition-colors duration-300">
+            <span className="text-[17px] font-semibold tracking-[0.34em] text-foreground transition-colors duration-300">
               AMHAR
             </span>
-            <span className="hidden sm:inline text-[10px] tracking-[0.24em] uppercase text-foreground/45 group-hover:text-[#c9a961] transition-colors duration-300 font-medium">
+            <span className="hidden sm:inline text-[10px] tracking-[0.26em] uppercase text-foreground/45 group-hover:text-[#b08842] transition-colors duration-300 font-semibold">
               Chauffeur
             </span>
           </a>
 
           {/* Desktop nav with scroll-spy */}
-          <nav className="hidden md:flex items-center gap-9">
+          <nav className="hidden md:flex items-center gap-10">
             {NAV_LINKS.map((link) => {
               const active = activeSection === link.href;
               return (
@@ -82,19 +82,19 @@ export function LandingNav() {
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "relative text-[12px] tracking-[0.14em] uppercase transition-colors duration-200 font-medium",
+                    "relative text-[13px] tracking-[0.14em] uppercase transition-colors duration-200 font-medium",
                     active
                       ? "text-foreground"
                       : "text-foreground/60 hover:text-foreground",
                   )}
                 >
                   {link.label}
-                  {/* Active underline */}
                   <span
                     className={cn(
-                      "absolute -bottom-1.5 left-0 h-px bg-[#c9a961] transition-all duration-300 ease-out",
+                      "absolute -bottom-1.5 left-0 h-px bg-[#b08842] transition-all duration-400 ease-out",
                       active ? "w-full" : "w-0",
                     )}
+                    style={{ transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)" }}
                   />
                 </a>
               );
@@ -104,7 +104,7 @@ export function LandingNav() {
           <div className="flex items-center gap-3">
             <a
               href="tel:+966503152119"
-              className="hidden lg:inline text-[12px] tracking-[0.14em] uppercase text-foreground/65 hover:text-foreground transition-colors duration-200 font-medium"
+              className="hidden lg:inline text-[13px] tracking-[0.14em] uppercase text-foreground/65 hover:text-foreground transition-colors duration-200 font-medium"
             >
               +966 50 315 2119
             </a>
@@ -117,13 +117,12 @@ export function LandingNav() {
               Request a Quote
             </LuxuryButton>
 
-            {/* Mobile toggle */}
             <button
               className="md:hidden p-2 -mr-2 text-foreground"
               onClick={() => setMobileOpen((v) => !v)}
               aria-label="Toggle menu"
             >
-              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
           </div>
         </div>
@@ -131,14 +130,14 @@ export function LandingNav() {
 
       {/* Mobile drawer */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-foreground/[0.08] bg-background/95 backdrop-blur-xl">
+        <div className="md:hidden border-t border-foreground/[0.10] bg-background/95 backdrop-blur-xl">
           <nav className="flex flex-col px-6 py-6 gap-5">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className="text-[13px] tracking-[0.18em] uppercase text-foreground/80 font-medium"
+                className="text-[14px] tracking-[0.18em] uppercase text-foreground/80 font-medium"
               >
                 {link.label}
               </a>

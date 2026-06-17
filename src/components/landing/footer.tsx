@@ -11,27 +11,39 @@ export function LandingFooter() {
   const openAdmin = useViewStore((s) => s.openAdmin);
 
   return (
-    <footer className="border-t border-foreground/[0.08] bg-ink">
+    <footer className="border-t border-foreground/[0.10] bg-charcoal texture-noise relative">
       {/* Final CTA */}
-      <section className="relative border-b border-foreground/[0.08] py-28 lg:py-36 overflow-hidden">
-        {/* Subtle gold radial in the background */}
+      <section className="relative border-b border-ivory/[0.08] py-32 lg:py-40 overflow-hidden">
+        {/* Gold radial in the background */}
         <div
           aria-hidden
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              "radial-gradient(ellipse at 50% 100%, color-mix(in oklch, var(--gold) 10%, transparent) 0%, transparent 60%)",
+              "radial-gradient(ellipse 60% 50% at 50% 100%, rgba(212, 184, 118, 0.18) 0%, transparent 65%)",
+          }}
+        />
+        {/* Top gold accent line */}
+        <div
+          aria-hidden
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-px"
+          style={{
+            background: "linear-gradient(90deg, transparent, #d4b876, transparent)",
           }}
         />
         <div className="relative mx-auto max-w-7xl px-6 lg:px-10 text-center">
           <Reveal>
-            <p className="text-eyebrow mb-8">Begin your journey</p>
-            <h2 className="text-display text-foreground mb-8 max-w-3xl mx-auto">
+            <p className="text-eyebrow mb-8 justify-center flex items-center gap-3">
+              <span className="w-8 h-px bg-[#d4b876]" />
+              Begin your journey
+              <span className="w-8 h-px bg-[#d4b876]" />
+            </p>
+            <h2 className="text-display text-ivory mb-9 max-w-3xl mx-auto">
               The next journey
               <br />
               <span className="text-gold-gradient italic font-normal">deserves more.</span>
             </h2>
-            <p className="text-body-lg max-w-xl mx-auto mb-12">
+            <p className="text-body-lg max-w-xl mx-auto mb-12 text-ivory/75">
               Submit a request today. Our concierge team will respond within
               minutes — tailored to your schedule, your destination, and your
               standard.
@@ -44,11 +56,11 @@ export function LandingFooter() {
                 onClick={() => openBooking()}
               >
                 Request a Quote
-                <ArrowRight size={14} strokeWidth={2} />
+                <ArrowRight size={15} strokeWidth={2} />
               </LuxuryButton>
               <a href="https://wa.me/966503152119" target="_blank" rel="noreferrer">
-                <LuxuryButton size="lg" variant="outline" magnetic>
-                  <MessageCircle size={14} strokeWidth={2} />
+                <LuxuryButton size="lg" variant="solid-light" magnetic>
+                  <MessageCircle size={15} strokeWidth={2} />
                   WhatsApp Concierge
                 </LuxuryButton>
               </a>
@@ -58,30 +70,30 @@ export function LandingFooter() {
       </section>
 
       {/* Footer body */}
-      <div className="mx-auto max-w-7xl px-6 lg:px-10 py-16">
+      <div className="mx-auto max-w-7xl px-6 lg:px-10 py-20">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="md:col-span-2">
-            <div className="flex items-center gap-2.5 mb-6">
-              <span className="text-[15px] font-semibold tracking-[0.32em] text-foreground">
+            <div className="flex items-center gap-3 mb-7">
+              <span className="text-[17px] font-semibold tracking-[0.34em] text-ivory">
                 AMHAR
               </span>
-              <span className="text-[10px] tracking-[0.24em] uppercase text-foreground/50 font-medium">
+              <span className="text-[10px] tracking-[0.26em] uppercase text-ivory/55 font-semibold">
                 Chauffeur
               </span>
             </div>
-            <p className="text-[13.5px] text-foreground/70 font-normal max-w-md leading-relaxed mb-6">
+            <p className="text-[15px] text-ivory/70 font-normal max-w-md leading-relaxed mb-7">
               A private chauffeur service based in Riyadh, Saudi Arabia.
               Premium limousine and chauffeur-driven transportation for airport
               transfers, corporate travel, VIPs, and bespoke journeys across
               the Kingdom and the wider Middle East.
             </p>
-            <div className="flex items-center gap-5 text-[12px] text-foreground/60">
+            <div className="flex items-center gap-6 text-[13px] text-ivory/60">
               <a
                 href="https://www.facebook.com/profile.php?id=61579634004083"
                 target="_blank"
                 rel="noreferrer"
-                className="hover:text-[#c9a961] transition-colors duration-200 tracking-[0.14em] uppercase font-medium"
+                className="hover:text-[#d4b876] transition-colors duration-200 tracking-[0.16em] uppercase font-semibold"
               >
                 Facebook
               </a>
@@ -89,7 +101,7 @@ export function LandingFooter() {
                 href="https://www.instagram.com/amharchaufferservice/"
                 target="_blank"
                 rel="noreferrer"
-                className="hover:text-[#c9a961] transition-colors duration-200 tracking-[0.14em] uppercase font-medium"
+                className="hover:text-[#d4b876] transition-colors duration-200 tracking-[0.16em] uppercase font-semibold"
               >
                 Instagram
               </a>
@@ -97,7 +109,7 @@ export function LandingFooter() {
                 href="https://www.youtube.com/@AmharLimousine"
                 target="_blank"
                 rel="noreferrer"
-                className="hover:text-[#c9a961] transition-colors duration-200 tracking-[0.14em] uppercase font-medium"
+                className="hover:text-[#d4b876] transition-colors duration-200 tracking-[0.16em] uppercase font-semibold"
               >
                 YouTube
               </a>
@@ -106,23 +118,23 @@ export function LandingFooter() {
 
           {/* Contact */}
           <div>
-            <p className="text-eyebrow-muted mb-5">Contact</p>
-            <ul className="space-y-3 text-[13.5px]">
+            <p className="text-eyebrow-muted mb-6 text-ivory/55">Contact</p>
+            <ul className="space-y-4 text-[14.5px]">
               <li>
                 <a
                   href="tel:+966503152119"
-                  className="flex items-center gap-2 text-foreground/75 hover:text-foreground transition-colors duration-200"
+                  className="flex items-center gap-2.5 text-ivory/80 hover:text-[#d4b876] transition-colors duration-200"
                 >
-                  <Phone size={12} strokeWidth={1.5} />
+                  <Phone size={13} strokeWidth={1.5} />
                   +966 50 315 2119
                 </a>
               </li>
               <li>
                 <a
                   href="mailto:booking@amharksa.com"
-                  className="flex items-center gap-2 text-foreground/75 hover:text-foreground transition-colors duration-200"
+                  className="flex items-center gap-2.5 text-ivory/80 hover:text-[#d4b876] transition-colors duration-200"
                 >
-                  <Mail size={12} strokeWidth={1.5} />
+                  <Mail size={13} strokeWidth={1.5} />
                   booking@amharksa.com
                 </a>
               </li>
@@ -131,9 +143,9 @@ export function LandingFooter() {
                   href="https://wa.me/966503152119"
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center gap-2 text-foreground/75 hover:text-foreground transition-colors duration-200"
+                  className="flex items-center gap-2.5 text-ivory/80 hover:text-[#d4b876] transition-colors duration-200"
                 >
-                  <MessageCircle size={12} strokeWidth={1.5} />
+                  <MessageCircle size={13} strokeWidth={1.5} />
                   WhatsApp Concierge
                 </a>
               </li>
@@ -142,25 +154,25 @@ export function LandingFooter() {
 
           {/* Navigation */}
           <div>
-            <p className="text-eyebrow-muted mb-5">Navigate</p>
-            <ul className="space-y-3 text-[13.5px]">
+            <p className="text-eyebrow-muted mb-6 text-ivory/55">Navigate</p>
+            <ul className="space-y-4 text-[14.5px]">
               <li>
-                <a href="#services" className="text-foreground/75 hover:text-foreground transition-colors duration-200">
+                <a href="#services" className="text-ivory/80 hover:text-[#d4b876] transition-colors duration-200">
                   Services
                 </a>
               </li>
               <li>
-                <a href="#fleet" className="text-foreground/75 hover:text-foreground transition-colors duration-200">
+                <a href="#fleet" className="text-ivory/80 hover:text-[#d4b876] transition-colors duration-200">
                   Fleet
                 </a>
               </li>
               <li>
-                <a href="#how" className="text-foreground/75 hover:text-foreground transition-colors duration-200">
+                <a href="#how" className="text-ivory/80 hover:text-[#d4b876] transition-colors duration-200">
                   How it works
                 </a>
               </li>
               <li>
-                <a href="#testimonials" className="text-foreground/75 hover:text-foreground transition-colors duration-200">
+                <a href="#testimonials" className="text-ivory/80 hover:text-[#d4b876] transition-colors duration-200">
                   Clients
                 </a>
               </li>
@@ -169,17 +181,17 @@ export function LandingFooter() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-16 pt-8 border-t border-foreground/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-[11px] tracking-[0.14em] uppercase text-foreground/50 font-medium">
+        <div className="mt-16 pt-8 border-t border-ivory/[0.10] flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-[12px] tracking-[0.16em] uppercase text-ivory/55 font-semibold">
             © {new Date().getFullYear()} AMHAR Premier Chauffeur Service
           </p>
-          <div className="flex items-center gap-6 text-[11px] tracking-[0.14em] uppercase text-foreground/50 font-medium">
-            <a href="#" className="hover:text-foreground transition-colors">
+          <div className="flex items-center gap-7 text-[12px] tracking-[0.16em] uppercase text-ivory/55 font-semibold">
+            <a href="#" className="hover:text-ivory transition-colors">
               Privacy
             </a>
             <button
               onClick={openAdmin}
-              className="hover:text-[#c9a961] transition-colors"
+              className="hover:text-[#d4b876] transition-colors"
               title="Operator portal"
             >
               Operator Portal

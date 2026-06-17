@@ -130,7 +130,7 @@ export function BookingModal() {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[640px] p-0 bg-background border-foreground/[0.08] rounded-sm overflow-hidden max-h-[92svh] overflow-y-auto">
+      <DialogContent className="max-w-[680px] p-0 bg-card border-foreground/[0.12] rounded-sm overflow-hidden max-h-[92svh] overflow-y-auto shadow-[0_40px_100px_-30px_rgba(26,22,18,0.4)]">
         <VisuallyHidden>
           <DialogTitle>Request a Quote</DialogTitle>
           <DialogDescription>
@@ -141,28 +141,31 @@ export function BookingModal() {
         {/* Close button — top right */}
         <button
           onClick={() => onOpenChange(false)}
-          className="absolute top-5 right-5 z-20 w-9 h-9 flex items-center justify-center text-foreground/65 hover:text-foreground hover:bg-foreground/[0.06] rounded-sm transition-all duration-200"
+          className="absolute top-5 right-5 z-20 w-10 h-10 flex items-center justify-center text-foreground/65 hover:text-foreground hover:bg-foreground/[0.06] rounded-sm transition-all duration-200"
           aria-label="Close"
         >
-          <X size={18} strokeWidth={1.5} />
+          <X size={20} strokeWidth={1.5} />
         </button>
 
         {/* Modal header — luxury header bar */}
-        <div className="px-8 pt-9 pb-6 border-b border-foreground/[0.08] relative">
+        <div className="px-9 pt-10 pb-7 border-b border-foreground/[0.10] relative bg-gradient-to-br from-card via-card to-[#b08842]/[0.04]">
           {/* Subtle gold gradient accent in top-right of header */}
           <div
             aria-hidden
-            className="absolute top-0 right-0 w-40 h-40 opacity-30 pointer-events-none"
+            className="absolute top-0 right-0 w-48 h-48 opacity-50 pointer-events-none"
             style={{
-              background: "radial-gradient(circle at 100% 0%, color-mix(in oklch, var(--gold) 18%, transparent) 0%, transparent 60%)",
+              background: "radial-gradient(circle at 100% 0%, rgba(176, 136, 66, 0.20) 0%, transparent 60%)",
             }}
           />
-          <p className="text-eyebrow mb-3 relative">Request a Quote</p>
-          <h2 className="text-[24px] font-normal text-foreground tracking-tight relative">
+          <p className="text-eyebrow mb-3 relative flex items-center gap-3">
+            <span className="w-7 h-px bg-[#b08842]" />
+            Request a Quote
+          </p>
+          <h2 className="text-[26px] font-semibold text-foreground tracking-tight relative">
             {submittedRef ? "Request received" : "Tell us about your journey"}
           </h2>
           {!submittedRef && (
-            <p className="text-[12.5px] text-foreground/70 mt-2 font-normal relative">
+            <p className="text-[14px] text-foreground/70 mt-3 font-normal relative">
               No payment required. We respond via WhatsApp within minutes.
             </p>
           )}
@@ -173,36 +176,36 @@ export function BookingModal() {
         ) : (
           <>
             {/* Step indicator */}
-            <div className="px-8 py-5 border-b border-foreground/[0.06] flex items-center gap-3">
+            <div className="px-9 py-6 border-b border-foreground/[0.10] flex items-center gap-3 bg-[#fffdf8]">
               {STEPS.map((label, i) => (
                 <div key={label} className="flex items-center gap-3 flex-1 last:flex-none">
                   <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium transition-all duration-300 ${
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold transition-all duration-300 ${
                       i < step
-                        ? "bg-[#c9a961] text-[#0a0a0b]"
+                        ? "bg-gradient-to-br from-[#d4b876] to-[#b08842] text-[#1a1612]"
                         : i === step
-                          ? "bg-foreground text-background"
-                          : "border border-foreground/15 text-foreground/40"
+                          ? "bg-[#1a1612] text-[#f6f1e9]"
+                          : "border border-foreground/20 text-foreground/50"
                     }`}
                   >
-                    {i < step ? <Check size={11} strokeWidth={2.5} /> : i + 1}
+                    {i < step ? <Check size={12} strokeWidth={2.5} /> : i + 1}
                   </div>
                   <span
-                    className={`text-[10px] tracking-[0.2em] uppercase transition-colors duration-300 ${
-                      i === step ? "text-foreground" : "text-foreground/40"
+                    className={`text-[11px] tracking-[0.22em] uppercase transition-colors duration-300 font-semibold ${
+                      i === step ? "text-foreground" : "text-foreground/45"
                     }`}
                   >
                     {label}
                   </span>
                   {i < STEPS.length - 1 && (
-                    <div className="flex-1 h-px bg-foreground/[0.08]" />
+                    <div className="flex-1 h-px bg-foreground/[0.10]" />
                   )}
                 </div>
               ))}
             </div>
 
             {/* Step body */}
-            <div className="px-8 py-8 min-h-[340px]">
+            <div className="px-9 py-9 min-h-[340px]">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={step}
@@ -226,7 +229,7 @@ export function BookingModal() {
             </div>
 
             {/* Footer — nav buttons */}
-            <div className="px-8 py-6 border-t border-foreground/[0.06] flex items-center justify-between gap-3">
+            <div className="px-9 py-7 border-t border-foreground/[0.10] flex items-center justify-between gap-3 bg-[#fffdf8]">
               {step > 0 ? (
                 <LuxuryButton
                   size="md"
@@ -234,7 +237,7 @@ export function BookingModal() {
                   onClick={() => setStep((s) => s - 1)}
                   disabled={submitting}
                 >
-                  <ArrowLeft size={13} strokeWidth={2} />
+                  <ArrowLeft size={14} strokeWidth={2} />
                   Back
                 </LuxuryButton>
               ) : (
@@ -249,7 +252,7 @@ export function BookingModal() {
                   disabled={!canProceed()}
                 >
                   Continue
-                  <ArrowRight size={13} strokeWidth={2} />
+                  <ArrowRight size={14} strokeWidth={2} />
                 </LuxuryButton>
               ) : (
                 <LuxuryButton
@@ -629,14 +632,14 @@ function StepperField({
   return (
     <div>
       <label className="text-eyebrow-muted flex items-center gap-2 mb-3">
-        <span className="text-foreground/65">{icon}</span>
+        <span className="text-foreground/70">{icon}</span>
         {label}
       </label>
-      <div className="flex items-center h-14 border border-foreground/[0.12] rounded-sm bg-foreground/[0.02] hover:border-foreground/25 transition-colors duration-200">
+      <div className="flex items-center h-14 border border-foreground/[0.15] rounded-sm bg-cream hover:border-[#b08842]/40 hover:shadow-[0_4px_16px_-4px_rgba(176,136,66,0.15)] transition-all duration-300">
         <button
           onClick={() => onChange(Math.max(min, value - 1))}
           disabled={value <= min}
-          className="w-12 h-full flex items-center justify-center text-foreground/65 hover:text-[#c9a961] hover:bg-foreground/[0.04] disabled:opacity-25 disabled:hover:bg-transparent disabled:hover:text-foreground/65 transition-all duration-200 text-[20px] font-light"
+          className="w-12 h-full flex items-center justify-center text-foreground/65 hover:text-[#b08842] hover:bg-[#b08842]/[0.06] disabled:opacity-25 disabled:hover:bg-transparent disabled:hover:text-foreground/65 transition-all duration-200 text-[22px] font-light"
           aria-label={`Decrease ${label}`}
         >
           −
@@ -648,12 +651,12 @@ function StepperField({
             const v = parseInt(e.target.value, 10);
             if (!isNaN(v)) onChange(Math.max(min, Math.min(max, v)));
           }}
-          className="amhar-stepper-input flex-1 h-full bg-transparent text-center text-[20px] font-medium text-foreground focus:outline-none border-x border-foreground/[0.12] tabular-nums"
+          className="amhar-stepper-input flex-1 h-full bg-transparent text-center text-[22px] font-semibold text-foreground focus:outline-none border-x border-foreground/[0.12] tabular-nums"
         />
         <button
           onClick={() => onChange(Math.min(max, value + 1))}
           disabled={value >= max}
-          className="w-12 h-full flex items-center justify-center text-foreground/65 hover:text-[#c9a961] hover:bg-foreground/[0.04] disabled:opacity-25 disabled:hover:bg-transparent disabled:hover:text-foreground/65 transition-all duration-200 text-[20px] font-light"
+          className="w-12 h-full flex items-center justify-center text-foreground/65 hover:text-[#b08842] hover:bg-[#b08842]/[0.06] disabled:opacity-25 disabled:hover:bg-transparent disabled:hover:text-foreground/65 transition-all duration-200 text-[22px] font-light"
           aria-label={`Increase ${label}`}
         >
           +

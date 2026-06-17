@@ -4,11 +4,11 @@
 @custom-variant dark (&:is(.dark *));
 
 /* =====================================================================
-   AMHAR — Luxury Design System
-   Inspired by: Rolls Royce, Bentley, Aston Martin digital presence
-   Palette: near-black backgrounds, gold/silver accents
-   Typography: Inter (primary), with refined tracking & weight control
-   Motion: 200–350ms cubic-bezier ease-out, no flashy animations
+   AMHAR — Polished Luxury Design System v2
+   Mix theme: warm ivory base + deep charcoal contrast sections
+   Accents: champagne gold, warm bronze, deep cognac
+   Typography: larger scale, refined hierarchy
+   Motion: 250–500ms ease-out, polished micro-interactions
    ===================================================================== */
 
 @theme inline {
@@ -16,6 +16,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-serif);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -50,7 +51,13 @@
   --color-gold: var(--gold);
   --color-gold-soft: var(--gold-soft);
   --color-gold-bright: var(--gold-bright);
-  --color-silver: var(--silver);
+  --color-champagne: var(--champagne);
+  --color-bronze: var(--bronze);
+  --color-cognac: var(--cognac);
+  --color-ivory: var(--ivory);
+  --color-cream: var(--cream);
+  --color-sand: var(--sand);
+  --color-charcoal: var(--charcoal);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
 
@@ -63,92 +70,113 @@
 :root {
   --radius: 0.5rem;
 
-  /* Light theme — for admin panel readability (used rarely) */
-  --background: oklch(0.99 0 0);
-  --foreground: oklch(0.18 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0 0);
-  --primary: oklch(0.18 0 0);
-  --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.96 0 0);
-  --secondary-foreground: oklch(0.20 0 0);
-  --muted: oklch(0.96 0 0);
-  --muted-foreground: oklch(0.52 0 0);
-  --accent: oklch(0.96 0 0);
-  --accent-foreground: oklch(0.20 0 0);
-  --destructive: oklch(0.58 0.24 27);
-  --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.92 0 0);
-  --input: oklch(0.92 0 0);
-  --ring: oklch(0.70 0 0);
-  --chart-1: oklch(0.65 0.10 60);
-  --chart-2: oklch(0.60 0.06 60);
-  --chart-3: oklch(0.55 0.04 60);
-  --chart-4: oklch(0.50 0.03 60);
-  --chart-5: oklch(0.45 0.02 60);
+  /* ---- Mix theme: ivory base, charcoal contrast sections ---- */
+  --background: #f6f1e9;                          /* warm ivory */
+  --foreground: #1a1612;                          /* deep espresso */
+  --card: #fffdf8;                                /* cream white */
+  --card-foreground: #1a1612;
+  --popover: #fffdf8;
+  --popover-foreground: #1a1612;
+  --primary: #1a1612;                             /* primary button = deep espresso */
+  --primary-foreground: #f6f1e9;
+  --secondary: #efe8dc;                           /* sand */
+  --secondary-foreground: #1a1612;
+  --muted: #efe8dc;
+  --muted-foreground: #6b5d4f;                    /* warm taupe */
+  --accent: #e8dfcf;
+  --accent-foreground: #1a1612;
+  --destructive: #b8463a;
+  --destructive-foreground: #f6f1e9;
+  --border: #1a1612 / 0.10;                       /* not used directly — see below */
+  --input: #1a1612;
+  --ring: #b08842;
+  --chart-1: #b08842;
+  --chart-2: #6b5d4f;
+  --chart-3: #d4b876;
+  --chart-4: #8a6d3b;
+  --chart-5: #3a3128;
 
-  /* AMHAR luxury tokens — same in both themes */
-  --gold: #c9a961;
-  --gold-soft: #d4b876;
-  --gold-bright: #e0c982;
-  --silver: #c8c8c8;
-  --ink: #0a0a0b;
-  --ink-soft: #131315;
+  /* AMHAR luxury palette */
+  --gold: #b08842;                                /* deep champagne gold */
+  --gold-soft: #c9a961;
+  --gold-bright: #d4b876;
+  --champagne: #e8d4a8;
+  --bronze: #8a6d3b;
+  --cognac: #6b4423;
+  --ivory: #f6f1e9;
+  --cream: #fffdf8;
+  --sand: #efe8dc;
+  --charcoal: #1f1a14;                            /* warm charcoal for contrast sections */
+  --charcoal-soft: #2a231b;
+  --ink: #0f0c08;
+  --ink-soft: #1a1612;
 
-  --sidebar: oklch(0.18 0 0);
-  --sidebar-foreground: oklch(0.98 0 0);
-  --sidebar-primary: oklch(0.65 0.10 60);
-  --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.22 0 0);
-  --sidebar-accent-foreground: oklch(0.98 0 0);
-  --sidebar-border: oklch(0.28 0 0);
-  --sidebar-ring: oklch(0.65 0.10 60);
+  --sidebar: #1f1a14;
+  --sidebar-foreground: #f6f1e9;
+  --sidebar-primary: #d4b876;
+  --sidebar-primary-foreground: #1a1612;
+  --sidebar-accent: #2a231b;
+  --sidebar-accent-foreground: #f6f1e9;
+  --sidebar-border: #f6f1e9 / 0.08;
+  --sidebar-ring: #d4b876;
+}
+
+/* Override shadcn variables that use oklch() — use plain rgba for compatibility */
+:root {
+  --border: rgba(26, 22, 18, 0.10);
+  --input: rgba(26, 22, 18, 0.10);
+  --sidebar-border: rgba(246, 241, 233, 0.08);
 }
 
 .dark {
-  /* AMHAR luxury dark theme — default */
-  --background: oklch(0.07 0 0);            /* #0A0A0B near-black */
-  --foreground: oklch(0.99 0.002 60);       /* lifted: near-pure white for crisp text */
-  --card: oklch(0.10 0 0);                  /* #131315 */
-  --card-foreground: oklch(0.99 0 0);
-  --popover: oklch(0.10 0 0);
-  --popover-foreground: oklch(0.99 0 0);
-  --primary: oklch(0.99 0 0);               /* primary button = white */
-  --primary-foreground: oklch(0.07 0 0);
-  --secondary: oklch(0.14 0 0);             /* subtle raised surface */
-  --secondary-foreground: oklch(0.99 0 0);
-  --muted: oklch(0.14 0 0);
-  --muted-foreground: oklch(0.72 0 0);      /* lifted: 0.62 → 0.72 for readable body */
-  --accent: oklch(0.16 0 0);
-  --accent-foreground: oklch(0.99 0 0);
-  --destructive: oklch(0.65 0.22 27);
-  --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(1 0 0 / 0.10);            /* lifted: 0.08 → 0.10 for clearer separation */
-  --input: oklch(1 0 0 / 0.10);
-  --ring: oklch(0.78 0.10 75);              /* gold ring for focus */
-  --chart-1: oklch(0.78 0.10 75);           /* gold */
-  --chart-2: oklch(0.70 0.04 60);           /* silver */
-  --chart-3: oklch(0.55 0.04 60);
-  --chart-4: oklch(0.45 0.03 60);
-  --chart-5: oklch(0.35 0.02 60);
+  /* Admin panel still uses the dark variant — keep it for the admin shell */
+  --background: #1a1612;
+  --foreground: #f6f1e9;
+  --card: #221d17;
+  --card-foreground: #f6f1e9;
+  --popover: #221d17;
+  --popover-foreground: #f6f1e9;
+  --primary: #f6f1e9;
+  --primary-foreground: #1a1612;
+  --secondary: #2a231b;
+  --secondary-foreground: #f6f1e9;
+  --muted: #2a231b;
+  --muted-foreground: #a89a85;
+  --accent: #2a231b;
+  --accent-foreground: #f6f1e9;
+  --destructive: #c25e50;
+  --destructive-foreground: #f6f1e9;
+  --border: rgba(246, 241, 233, 0.10);
+  --input: rgba(246, 241, 233, 0.10);
+  --ring: #d4b876;
+  --chart-1: #d4b876;
+  --chart-2: #a89a85;
+  --chart-3: #8a6d3b;
+  --chart-4: #6b5d4f;
+  --chart-5: #3a3128;
 
-  --gold: #c9a961;
-  --gold-soft: #d4b876;
-  --gold-bright: #e0c982;                   /* new: brighter gold for emphasis */
-  --silver: #c8c8c8;                        /* lifted: #b8b8b8 → #c8c8c8 */
-  --ink: #0a0a0b;
-  --ink-soft: #131315;
+  --gold: #d4b876;
+  --gold-soft: #e0c982;
+  --gold-bright: #ebd590;
+  --champagne: #e8d4a8;
+  --bronze: #b08842;
+  --cognac: #c98a5a;
+  --ivory: #f6f1e9;
+  --cream: #fffdf8;
+  --sand: #efe8dc;
+  --charcoal: #1a1612;
+  --charcoal-soft: #221d17;
+  --ink: #0f0c08;
+  --ink-soft: #1a1612;
 
-  --sidebar: oklch(0.09 0 0);
-  --sidebar-foreground: oklch(0.99 0 0);
-  --sidebar-primary: oklch(0.78 0.10 75);
-  --sidebar-primary-foreground: oklch(0.07 0 0);
-  --sidebar-accent: oklch(0.13 0 0);
-  --sidebar-accent-foreground: oklch(0.99 0 0);
-  --sidebar-border: oklch(1 0 0 / 0.08);
-  --sidebar-ring: oklch(0.78 0.10 75);
+  --sidebar: #1a1612;
+  --sidebar-foreground: #f6f1e9;
+  --sidebar-primary: #d4b876;
+  --sidebar-primary-foreground: #1a1612;
+  --sidebar-accent: #221d17;
+  --sidebar-accent-foreground: #f6f1e9;
+  --sidebar-border: rgba(246, 241, 233, 0.08);
+  --sidebar-ring: #d4b876;
 }
 
 /* ---------------- Base layer ---------------- */
@@ -168,111 +196,151 @@
 
   ::selection {
     background-color: var(--gold);
-    color: var(--ink);
+    color: var(--ivory);
   }
 
-  /* Refined focus ring */
   :focus-visible {
     outline: none;
     box-shadow: 0 0 0 1px var(--ring);
   }
 
-  /* Custom scrollbar — slim, dark, subtle */
+  /* Custom scrollbar — slim, warm tones */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 9px;
+    height: 9px;
   }
   ::-webkit-scrollbar-track {
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: oklch(1 0 0 / 0.08);
+    background: rgba(176, 136, 66, 0.25);
     border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: oklch(1 0 0 / 0.16);
+    background: rgba(176, 136, 66, 0.5);
+    background-clip: padding-box;
+    border: 2px solid transparent;
   }
 }
 
 /* ---------------- AMHAR utility classes ---------------- */
 @layer utilities {
-  /* Typography — controlled tracking, lifted contrast */
+  /* Typography — larger, refined hierarchy */
   .text-eyebrow {
-    font-size: 0.6875rem;
+    font-size: 0.75rem;
     font-weight: 600;
-    letter-spacing: 0.24em;
+    letter-spacing: 0.26em;
     text-transform: uppercase;
-    color: var(--gold-bright);
+    color: var(--gold);
   }
   .text-eyebrow-muted {
-    font-size: 0.6875rem;
+    font-size: 0.75rem;
     font-weight: 600;
-    letter-spacing: 0.24em;
+    letter-spacing: 0.26em;
     text-transform: uppercase;
-    color: color-mix(in oklch, var(--foreground) 65%, transparent);
+    color: var(--muted-foreground);
   }
   .text-display {
-    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-size: clamp(2.75rem, 6.5vw, 5.5rem);
     font-weight: 300;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
     line-height: 1.05;
   }
   .text-headline {
-    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-size: clamp(2rem, 3.5vw, 3rem);
     font-weight: 400;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.018em;
     line-height: 1.15;
   }
+  .text-subhead {
+    font-size: clamp(1.125rem, 1.4vw, 1.375rem);
+    font-weight: 400;
+    line-height: 1.55;
+    color: var(--muted-foreground);
+  }
   .text-body-lg {
-    font-size: 1.0625rem;
+    font-size: 1.125rem;
+    font-weight: 400;
+    line-height: 1.75;
+    color: var(--muted-foreground);
+  }
+  .text-body {
+    font-size: 1rem;
     font-weight: 400;
     line-height: 1.7;
-    color: color-mix(in oklch, var(--foreground) 78%, transparent);
+    color: var(--muted-foreground);
   }
 
   /* Hairline borders */
   .border-hairline {
-    border-color: oklch(1 0 0 / 0.06);
+    border-color: rgba(26, 22, 18, 0.08);
+  }
+  .dark .border-hairline {
+    border-color: rgba(246, 241, 233, 0.06);
   }
 
-  /* Gold gradient text — for accent words only */
+  /* Gold gradient text — for accent words */
   .text-gold-gradient {
-    background: linear-gradient(135deg, var(--gold-soft) 0%, var(--gold) 60%, #a8893f 100%);
+    background: linear-gradient(135deg, var(--gold-bright) 0%, var(--gold) 50%, var(--bronze) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
   }
 
-  /* Subtle luxury surface — for cards */
+  /* Ivory gradient text — for dark sections */
+  .text-ivory-gradient {
+    background: linear-gradient(180deg, var(--ivory) 0%, var(--champagne) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Luxury surface — light theme card with refined hover */
   .surface-luxury {
     background-color: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    transition: border-color 280ms cubic-bezier(0.16, 1, 0.3, 1),
-                transform 280ms cubic-bezier(0.16, 1, 0.3, 1),
-                background-color 280ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition: border-color 350ms cubic-bezier(0.16, 1, 0.3, 1),
+                transform 350ms cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 350ms cubic-bezier(0.16, 1, 0.3, 1);
   }
   .surface-luxury:hover {
-    border-color: oklch(0.78 0.10 75 / 0.35);
-    transform: translateY(-2px);
+    border-color: rgba(176, 136, 66, 0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 50px -25px rgba(26, 22, 18, 0.18),
+                0 0 0 1px rgba(176, 136, 66, 0.08);
   }
 
-  /* Hero gradient overlay */
+  /* Cinematic background for hero — layered gradients with warm gold tint */
   .bg-cinematic {
     background:
-      radial-gradient(ellipse at 70% 30%, oklch(0.78 0.10 75 / 0.06) 0%, transparent 50%),
-      radial-gradient(ellipse at 20% 80%, oklch(1 0 0 / 0.04) 0%, transparent 60%),
-      linear-gradient(180deg, var(--background) 0%, var(--ink) 100%);
+      radial-gradient(ellipse 60% 50% at 70% 25%, rgba(212, 184, 118, 0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 15% 75%, rgba(176, 136, 66, 0.10) 0%, transparent 60%),
+      linear-gradient(180deg, var(--ivory) 0%, var(--sand) 100%);
   }
 
-  /* Subtle noise overlay — adds tactile quality to hero */
+  /* Charcoal contrast section — for How it works, CTA footer */
+  .bg-charcoal {
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(212, 184, 118, 0.10) 0%, transparent 60%),
+      linear-gradient(180deg, var(--charcoal) 0%, var(--ink-soft) 100%);
+    color: var(--ivory);
+  }
+
+  /* Subtle noise overlay — adds tactile quality */
   .texture-noise::before {
     content: "";
     position: absolute;
     inset: 0;
     pointer-events: none;
-    opacity: 0.4;
+    opacity: 0.5;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .dark .texture-noise::before {
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
@@ -290,42 +358,47 @@
     display: none;
   }
 
-  /* Vertical text — for section labels */
-  .text-vertical {
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-  }
-
-  /* AMHAR form input — restrained, luxury, lifted contrast */
+  /* AMHAR form input — polished, light theme */
   .amhar-input {
     width: 100%;
-    height: 44px;
-    padding: 0 14px;
-    background: color-mix(in oklch, var(--foreground) 2%, transparent);
+    height: 48px;
+    padding: 0 16px;
+    background: var(--cream);
     border: 1px solid var(--border);
-    border-radius: 2px;
+    border-radius: 3px;
     color: var(--foreground);
-    font-size: 13.5px;
+    font-size: 14px;
     font-weight: 400;
     transition: border-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
-                background-color 220ms cubic-bezier(0.16, 1, 0.3, 1);
+                background-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1);
   }
   .amhar-input::placeholder {
-    color: color-mix(in oklch, var(--foreground) 38%, transparent);
+    color: rgba(26, 22, 18, 0.40);
     opacity: 1;
   }
   .amhar-input:focus {
     outline: none;
     border-color: var(--gold);
-    background-color: color-mix(in oklch, var(--foreground) 4%, transparent);
+    background-color: var(--cream);
+    box-shadow: 0 0 0 3px rgba(176, 136, 66, 0.10);
   }
   .amhar-input:hover:not(:focus) {
-    border-color: color-mix(in oklch, var(--foreground) 32%, transparent);
+    border-color: rgba(26, 22, 18, 0.30);
   }
-  /* Dark theme adjustments for native date/time pickers */
+  .dark .amhar-input {
+    background: var(--charcoal-soft);
+  }
+  .dark .amhar-input::placeholder {
+    color: rgba(246, 241, 233, 0.40);
+  }
+  .dark .amhar-input:hover:not(:focus) {
+    border-color: rgba(246, 241, 233, 0.30);
+  }
+  /* Native date/time pickers */
   .amhar-input[type="date"]::-webkit-calendar-picker-indicator,
   .amhar-input[type="time"]::-webkit-calendar-picker-indicator {
-    filter: invert(0.85);
+    filter: invert(0.4) sepia(0.3);
     cursor: pointer;
     opacity: 0.7;
     transition: opacity 200ms ease;
@@ -334,8 +407,12 @@
   .amhar-input[type="time"]:hover::-webkit-calendar-picker-indicator {
     opacity: 1;
   }
+  .dark .amhar-input[type="date"]::-webkit-calendar-picker-indicator,
+  .dark .amhar-input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.9) sepia(0.2);
+  }
 
-  /* AMHAR stepper number input — for the booking modal passengers/luggage fields */
+  /* AMHAR stepper number input */
   .amhar-stepper-input {
     -moz-appearance: textfield;
     appearance: textfield;
@@ -346,13 +423,13 @@
     margin: 0;
   }
 
-  /* Magnetic CTA — for primary buttons. The element shifts subtly toward the cursor. */
+  /* Magnetic CTA */
   .magnetic-cta {
     transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
     will-change: transform;
   }
 
-  /* Gold underline reveal — for hover states on links/cards */
+  /* Gold underline reveal */
   .gold-underline {
     position: relative;
   }
@@ -370,46 +447,90 @@
     width: 100%;
   }
 
-  /* Reveal on scroll — initial hidden state */
+  /* Reveal on scroll */
   .reveal-on-scroll {
     opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
-                transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(28px);
+    transition: opacity 800ms cubic-bezier(0.16, 1, 0.3, 1),
+                transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
   }
   .reveal-on-scroll.is-revealed {
     opacity: 1;
     transform: translateY(0);
   }
 
-  /* Cursor follower — luxury gold dot that trails the cursor */
+  /* Cursor follower — luxury gold glow */
   .cursor-glow {
     position: fixed;
     pointer-events: none;
-    width: 280px;
-    height: 280px;
+    width: 320px;
+    height: 320px;
     border-radius: 50%;
     background: radial-gradient(
       circle,
-      color-mix(in oklch, var(--gold) 14%, transparent) 0%,
+      rgba(176, 136, 66, 0.18) 0%,
+      rgba(212, 184, 118, 0.08) 40%,
       transparent 70%
     );
     transform: translate(-50%, -50%);
     z-index: 1;
     transition: opacity 400ms ease;
     opacity: 0;
-    mix-blend-mode: screen;
+    mix-blend-mode: multiply;
   }
   @media (hover: hover) and (pointer: fine) {
     .cursor-glow.is-active {
       opacity: 1;
     }
   }
-
-  /* Hide cursor glow on touch devices */
+  .dark .cursor-glow {
+    mix-blend-mode: screen;
+  }
   @media (hover: none) {
     .cursor-glow {
       display: none;
     }
+  }
+
+  /* Polished gold sheen — for buttons and badges */
+  .sheen-gold {
+    position: relative;
+    overflow: hidden;
+  }
+  .sheen-gold::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      105deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.4) 50%,
+      transparent 100%
+    );
+    transition: left 700ms cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+  }
+  .sheen-gold:hover::before {
+    left: 150%;
+  }
+
+  /* Divider — gold center accent */
+  .divider-gold {
+    position: relative;
+    height: 1px;
+    background: var(--border);
+  }
+  .divider-gold::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--gold) 50%, transparent 100%);
   }
 }

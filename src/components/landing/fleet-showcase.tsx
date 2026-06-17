@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Users, Briefcase } from "lucide-react";
 import { useBookingStore } from "@/stores/booking-store";
@@ -31,16 +31,22 @@ export function FleetShowcase({ fleet }: Props) {
   });
 
   return (
-    <section id="fleet" className="py-32 lg:py-40 border-t border-foreground/[0.08]">
+    <section
+      id="fleet"
+      className="py-32 lg:py-44 border-t border-foreground/[0.10] bg-[#efe8dc]/40"
+    >
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         {/* Header */}
         <Reveal className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-16">
           <div className="max-w-2xl">
-            <p className="text-eyebrow mb-6">The Fleet</p>
-            <h2 className="text-headline text-foreground mb-6">
+            <p className="text-eyebrow mb-6 flex items-center gap-3">
+              <span className="w-8 h-px bg-[#b08842]" />
+              The Fleet
+            </p>
+            <h2 className="text-headline text-foreground mb-7">
               Vehicles, chosen with
               <br />
-              <span className="text-foreground/45">deliberation.</span>
+              <span className="text-foreground/40">deliberation.</span>
             </h2>
             <p className="text-body-lg max-w-lg">
               Every car in our fleet earns its place. Curated for comfort,
@@ -52,18 +58,18 @@ export function FleetShowcase({ fleet }: Props) {
           {/* Scroll controls */}
           <div className="hidden md:flex items-center gap-3">
             <button
-              onClick={() => scrollBy(-420)}
-              className="w-12 h-12 rounded-sm border border-foreground/15 flex items-center justify-center text-foreground/75 hover:border-[#c9a961]/50 hover:text-[#c9a961] hover:bg-[#c9a961]/[0.05] transition-all duration-300"
+              onClick={() => scrollBy(-440)}
+              className="w-14 h-14 rounded-sm border border-foreground/20 flex items-center justify-center text-foreground/75 hover:border-[#b08842] hover:text-[#b08842] hover:bg-[#b08842]/[0.06] transition-all duration-300"
               aria-label="Previous vehicles"
             >
-              <ArrowLeft size={16} strokeWidth={1.5} />
+              <ArrowLeft size={18} strokeWidth={1.5} />
             </button>
             <button
-              onClick={() => scrollBy(420)}
-              className="w-12 h-12 rounded-sm border border-foreground/15 flex items-center justify-center text-foreground/75 hover:border-[#c9a961]/50 hover:text-[#c9a961] hover:bg-[#c9a961]/[0.05] transition-all duration-300"
+              onClick={() => scrollBy(440)}
+              className="w-14 h-14 rounded-sm border border-foreground/20 flex items-center justify-center text-foreground/75 hover:border-[#b08842] hover:text-[#b08842] hover:bg-[#b08842]/[0.06] transition-all duration-300"
               aria-label="Next vehicles"
             >
-              <ArrowRight size={16} strokeWidth={1.5} />
+              <ArrowRight size={18} strokeWidth={1.5} />
             </button>
           </div>
         </Reveal>
@@ -71,18 +77,18 @@ export function FleetShowcase({ fleet }: Props) {
         {/* Horizontal scroll */}
         <div
           ref={scrollRef}
-          className="flex gap-6 overflow-x-auto scrollbar-none pb-4 -mx-6 px-6 lg:-mx-10 lg:px-10 snap-x snap-mandatory"
+          className="flex gap-7 overflow-x-auto scrollbar-none pb-4 -mx-6 px-6 lg:-mx-10 lg:px-10 snap-x snap-mandatory"
         >
           {sorted.map((v, i) => {
             const cat = v.category as VehicleCategory;
             return (
               <motion.button
                 key={v.id}
-                initial={{ opacity: 0, y: 16 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{
-                  duration: 0.5,
+                  duration: 0.6,
                   delay: Math.min(i * 0.05, 0.3),
                   ease: [0.16, 1, 0.3, 1],
                 }}
@@ -93,54 +99,55 @@ export function FleetShowcase({ fleet }: Props) {
                     vehicleName: v.name,
                   })
                 }
-                className="group flex-shrink-0 w-[300px] md:w-[340px] snap-start text-left"
+                className="group flex-shrink-0 w-[320px] md:w-[360px] snap-start text-left"
               >
-                {/* Image */}
-                <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-foreground/[0.04] mb-5 border border-foreground/[0.06] group-hover:border-[#c9a961]/30 transition-colors duration-300">
+                {/* Image card */}
+                <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-foreground/[0.04] mb-6 border border-foreground/[0.08] group-hover:border-[#b08842]/40 group-hover:shadow-[0_30px_60px_-25px_rgba(26,22,18,0.25)] transition-all duration-500">
                   {v.imageUrl ? (
                     <img
                       src={v.imageUrl}
                       alt={v.name}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-[10px] tracking-[0.24em] uppercase text-foreground/40">
+                      <span className="text-[11px] tracking-[0.26em] uppercase text-foreground/40 font-semibold">
                         {v.brand}
                       </span>
                     </div>
                   )}
-                  {/* Gradient overlay on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  {/* Gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#1a1612]/70 via-[#1a1612]/10 to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-500" />
+                  {/* Category badge */}
                   <div className="absolute top-4 left-4">
-                    <span className="inline-block px-2.5 py-1 bg-background/85 backdrop-blur-sm text-[9px] tracking-[0.2em] uppercase text-foreground/80 font-medium rounded-sm">
+                    <span className="inline-block px-3 py-1.5 bg-[#fffdf8]/95 backdrop-blur-sm text-[10px] tracking-[0.22em] uppercase text-foreground/80 font-semibold rounded-sm border border-foreground/10">
                       {CATEGORY_META[cat]?.label ?? v.category}
                     </span>
                   </div>
-                  {/* "Request" overlay button — appears on hover */}
-                  <div className="absolute bottom-4 left-4 right-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out">
-                    <div className="inline-flex items-center gap-2 px-3 py-2 bg-[#c9a961] text-[#0a0a0b] rounded-sm text-[10px] tracking-[0.18em] uppercase font-semibold">
+                  {/* Vehicle name on image — visible on hover */}
+                  <div className="absolute bottom-5 left-5 right-5 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-400">
+                    <div className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-[#d4b876] to-[#b08842] text-[#1a1612] rounded-sm text-[11px] tracking-[0.20em] uppercase font-bold sheen-gold">
                       Request this vehicle
-                      <ArrowRight size={11} strokeWidth={2.5} />
+                      <ArrowRight size={12} strokeWidth={2.5} />
                     </div>
                   </div>
                 </div>
 
                 {/* Info */}
                 <div className="px-1">
-                  <p className="text-[10px] tracking-[0.2em] uppercase text-foreground/50 mb-2 font-medium">
+                  <p className="text-[11px] tracking-[0.22em] uppercase text-foreground/50 mb-2 font-semibold">
                     {v.brand}
                   </p>
-                  <h3 className="text-[18px] font-medium text-foreground mb-4 tracking-tight group-hover:text-[#c9a961] transition-colors duration-300">
+                  <h3 className="text-[20px] font-semibold text-foreground mb-4 tracking-tight group-hover:text-[#b08842] transition-colors duration-300">
                     {v.name}
                   </h3>
-                  <div className="flex items-center gap-5 text-[12px] text-foreground/65 font-medium">
-                    <span className="flex items-center gap-1.5">
-                      <Users size={13} strokeWidth={1.5} />
+                  <div className="flex items-center gap-6 text-[13px] text-foreground/70 font-medium">
+                    <span className="flex items-center gap-2">
+                      <Users size={14} strokeWidth={1.5} className="text-foreground/55" />
                       {v.seats} seats
                     </span>
-                    <span className="flex items-center gap-1.5">
-                      <Briefcase size={13} strokeWidth={1.5} />
+                    <span className="flex items-center gap-2">
+                      <Briefcase size={14} strokeWidth={1.5} className="text-foreground/55" />
                       {v.luggage} luggage
                     </span>
                   </div>
@@ -154,12 +161,12 @@ export function FleetShowcase({ fleet }: Props) {
         <Reveal delay={200} className="mt-16 flex justify-center">
           <LuxuryButton
             size="lg"
-            variant="outline"
+            variant="solid-dark"
             magnetic
             onClick={() => openBooking()}
           >
             Request a Quote for Any Vehicle
-            <ArrowRight size={14} strokeWidth={2} />
+            <ArrowRight size={15} strokeWidth={2} />
           </LuxuryButton>
         </Reveal>
       </div>

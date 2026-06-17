@@ -39,7 +39,7 @@ export function AdminShell() {
   }, [setActor]);
 
   return (
-    <div className="min-h-screen flex bg-background">
+    <div className="dark min-h-screen flex bg-background">
       <AdminSidebar />
 
       <main className="flex-1 min-w-0 ml-72">
