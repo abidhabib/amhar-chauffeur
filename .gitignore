@@ -76,3 +76,6 @@ server.log
 
 # OS files
 Thumbs.db
+
+# Generated PDF/PNG artifacts (served via scripts/serve_pdf.py)
+/public/downloads/
