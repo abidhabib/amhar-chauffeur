@@ -21,6 +21,8 @@ interface Props {
   icon?: "from" | "to" | "location";
   autoFocus?: boolean;
   id?: string;
+  /** Dark variant for use over dark backgrounds (glass effect) */
+  isDark?: boolean;
 }
 
 export function LocationAutocomplete({
@@ -32,6 +34,7 @@ export function LocationAutocomplete({
   icon = "from",
   autoFocus,
   id,
+  isDark = false,
 }: Props) {
   // `query` is the user's in-progress typing. When the field has a committed
   // `value`, we display the value's name. When the user types, we show `query`.
@@ -102,21 +105,31 @@ export function LocationAutocomplete({
     <div ref={containerRef} className="relative w-full">
       <label
         htmlFor={id}
-        className="block text-[10px] font-semibold tracking-[0.22em] uppercase text-foreground/55 mb-1.5"
+        className={cn(
+          "block text-[10px] font-semibold tracking-[0.22em] uppercase mb-1.5",
+          isDark ? "text-[#f6f1e9]/55" : "text-foreground/55",
+        )}
       >
         {label}
       </label>
 
       <div
         className={cn(
-          "relative flex items-center bg-cream border rounded-sm h-14 px-4 transition-all duration-220",
+          "relative flex items-center rounded-xl h-14 px-4 transition-all duration-300 backdrop-blur-sm border",
           open
-            ? "border-[#b08842] shadow-[0_0_0_3px_rgba(176,136,66,0.10)]"
-            : "border-foreground/[0.15] hover:border-foreground/30",
+            ? isDark
+              ? "border-[#b08842] bg-[#0f0c08]/40 shadow-[0_0_0_3px_rgba(176,136,66,0.15)]"
+              : "border-[#b08842] bg-cream/80 shadow-[0_0_0_3px_rgba(176,136,66,0.10)]"
+            : isDark
+              ? "bg-[#0f0c08]/40 border-[#d4b876]/15 hover:border-[#d4b876]/40"
+              : "bg-cream/80 border-foreground/[0.12] hover:border-foreground/30",
         )}
       >
         {/* Icon */}
-        <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-foreground/55 mr-3">
+        <div className={cn(
+          "flex-shrink-0 w-8 h-8 flex items-center justify-center mr-3",
+          isDark ? "text-[#d4b876]/70" : "text-foreground/55",
+        )}>
           <MapPin size={18} strokeWidth={1.5} className={icon === "to" ? "text-[#b08842]" : ""} />
         </div>
 
@@ -134,7 +147,10 @@ export function LocationAutocomplete({
           onFocus={() => setOpen(true)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="flex-1 min-w-0 bg-transparent text-[14px] text-foreground placeholder:text-foreground/40 focus:outline-none font-medium"
+          className={cn(
+            "flex-1 min-w-0 bg-transparent text-[14px] focus:outline-none font-medium placeholder:text-foreground/40",
+            isDark ? "text-[#f6f1e9] placeholder:text-[#f6f1e9]/40" : "text-foreground",
+          )}
           autoComplete="off"
           aria-label={label}
           role="combobox"

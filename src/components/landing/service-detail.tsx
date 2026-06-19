@@ -115,18 +115,28 @@ export function ServiceDetail({ serviceSlug, fleet }: Props) {
         </div>
       </section>
 
-      {/* Booking widget section */}
-      <section className="relative -mt-12 pb-20 z-20">
+      {/* Booking widget section — no overlap, clean spacing */}
+      <section className="relative py-20 z-20 bg-background">
+        {/* Subtle gold divider line at top */}
+        <div
+          aria-hidden
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-px"
+          style={{ background: "linear-gradient(90deg, transparent, #b08842, transparent)" }}
+        />
         <div className="mx-auto max-w-7xl px-6 lg:px-10">
           <Reveal>
-            <div className="mb-7">
-              <p className="text-eyebrow mb-3 flex items-center gap-3">
+            <div className="mb-8 text-center">
+              <p className="text-eyebrow mb-3 flex items-center justify-center gap-3">
                 <span className="w-8 h-px bg-[#b08842]" />
                 Book this service
+                <span className="w-8 h-px bg-[#b08842]" />
               </p>
               <h2 className="text-[clamp(1.5rem,2.2vw,2rem)] font-semibold text-foreground tracking-tight">
                 Get an instant quote
               </h2>
+              <p className="text-[13px] text-foreground/55 font-normal mt-2">
+                Enter your journey details — we&apos;ll show available vehicles with upfront pricing.
+              </p>
             </div>
             <BookingWidget defaultTab={service.bookingTab} service={service.slug} />
           </Reveal>

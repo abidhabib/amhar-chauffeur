@@ -240,7 +240,7 @@ export function ServicesPage({ fleet: _fleet }: Props) {
       </section>
 
       {/* Alternating Image/Text Sections */}
-      <section id="services-list" className="bg-background">
+      <div id="services-list" className="bg-background">
         {SERVICE_SECTIONS.map((service, i) => (
           <ServiceAlternatingSection
             key={service.id}
@@ -249,31 +249,31 @@ export function ServicesPage({ fleet: _fleet }: Props) {
             onBook={() => openBooking()}
           />
         ))}
-      </section>
+      </div>
 
-      {/* FAQ Section */}
-      <section className="py-32 lg:py-44 border-t border-foreground/[0.10] bg-[#efe8dc]/40">
+      {/* FAQ Section — always visible (no Reveal wrapper on items) */}
+      <section className="py-24 lg:py-32 border-t border-foreground/[0.10] bg-[#efe8dc]/40">
         <div className="mx-auto max-w-4xl px-6 lg:px-10">
-          <Reveal className="text-center mb-16">
+          {/* Header */}
+          <div className="text-center mb-14">
             <p className="text-eyebrow mb-6 flex items-center justify-center gap-3">
               <span className="w-8 h-px bg-[#b08842]" />
               Frequently Asked Questions
               <span className="w-8 h-px bg-[#b08842]" />
             </p>
-            <h2 className="text-headline text-foreground mb-6">
+            <h2 className="text-headline text-foreground mb-5">
               Everything you need to know
             </h2>
             <p className="text-body-lg max-w-2xl mx-auto">
               Can&apos;t find the answer you&apos;re looking for? Reach out to our
               concierge team on WhatsApp — we respond within minutes.
             </p>
-          </Reveal>
+          </div>
 
+          {/* FAQ items — NOT wrapped in Reveal so they're always visible */}
           <div className="space-y-3">
             {FAQS.map((faq, i) => (
-              <Reveal key={i} delay={Math.min(i * 50, 300)}>
-                <FaqAccordion question={faq.q} answer={faq.a} />
-              </Reveal>
+              <FaqAccordion key={i} question={faq.q} answer={faq.a} index={i} />
             ))}
           </div>
         </div>
@@ -290,31 +290,29 @@ export function ServicesPage({ fleet: _fleet }: Props) {
           }}
         />
         <div className="relative mx-auto max-w-4xl px-6 lg:px-10 text-center">
-          <Reveal>
-            <h2 className="text-display text-ivory mb-7 max-w-2xl mx-auto">
-              Ready to book your <span className="text-gold-gradient italic font-normal">journey?</span>
-            </h2>
-            <p className="text-body-lg text-ivory/75 max-w-xl mx-auto mb-10">
-              Our concierge team is available 24/7 — submit a request and we&apos;ll
-              respond on WhatsApp within minutes.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <LuxuryButton
-                size="lg"
-                variant="solid-gold"
-                magnetic
-                onClick={() => openBooking()}
-              >
-                Request a Quote
-                <ArrowRight size={15} strokeWidth={2} />
+          <h2 className="text-display text-ivory mb-7 max-w-2xl mx-auto">
+            Ready to book your <span className="text-gold-gradient italic font-normal">journey?</span>
+          </h2>
+          <p className="text-body-lg text-ivory/75 max-w-xl mx-auto mb-10">
+            Our concierge team is available 24/7 — submit a request and we&apos;ll
+            respond on WhatsApp within minutes.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <LuxuryButton
+              size="lg"
+              variant="solid-gold"
+              magnetic
+              onClick={() => openBooking()}
+            >
+              Request a Quote
+              <ArrowRight size={15} strokeWidth={2} />
+            </LuxuryButton>
+            <a href="https://wa.me/966503152119" target="_blank" rel="noreferrer">
+              <LuxuryButton size="lg" variant="solid-light" magnetic>
+                WhatsApp Concierge
               </LuxuryButton>
-              <a href="https://wa.me/966503152119" target="_blank" rel="noreferrer">
-                <LuxuryButton size="lg" variant="solid-light" magnetic>
-                  WhatsApp Concierge
-                </LuxuryButton>
-              </a>
-            </div>
-          </Reveal>
+            </a>
+          </div>
         </div>
       </section>
     </div>
@@ -339,30 +337,30 @@ function ServiceAlternatingSection({
   return (
     <div
       className={cn(
-        "py-20 lg:py-28 border-b border-foreground/[0.08]",
+        "py-16 lg:py-24 border-b border-foreground/[0.08]",
         index % 2 === 1 && "bg-[#efe8dc]/30",
       )}
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
           {/* Image */}
-          <Reveal
+          <div
             className={cn(
-              "relative aspect-[4/3] rounded-md overflow-hidden shadow-[0_30px_80px_-30px_rgba(26,22,18,0.35)]",
+              "relative aspect-[4/3] rounded-xl overflow-hidden shadow-[0_30px_80px_-30px_rgba(26,22,18,0.35)] group",
               isReversed && "lg:order-2",
             )}
           >
             <img
               src={service.image}
               alt={service.title}
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0f0c08]/40 via-transparent to-transparent" />
             {/* Icon badge on image */}
-            <div className="absolute top-6 left-6 w-14 h-14 rounded-sm bg-card/95 backdrop-blur-md border border-foreground/10 flex items-center justify-center text-[#b08842]">
+            <div className="absolute top-6 left-6 w-14 h-14 rounded-xl bg-card/95 backdrop-blur-md border border-foreground/10 flex items-center justify-center text-[#b08842] shadow-lg">
               <Icon size={22} strokeWidth={1.5} />
             </div>
-            {/* Title on image (mobile) */}
+            {/* Title on image (mobile only) */}
             <div className="absolute bottom-6 left-6 right-6 lg:hidden">
               <p className="text-[11px] tracking-[0.24em] uppercase text-[#d4b876] font-semibold mb-1">
                 Service 0{index + 1}
@@ -371,29 +369,31 @@ function ServiceAlternatingSection({
                 {service.title}
               </h3>
             </div>
-          </Reveal>
+          </div>
 
           {/* Text content */}
-          <Reveal
-            delay={150}
-            className={cn(isReversed && "lg:order-1")}
+          <div
+            className={cn(
+              "flex flex-col",
+              isReversed && "lg:order-1",
+            )}
           >
             <p className="text-eyebrow mb-4 flex items-center gap-3">
               <span className="w-8 h-px bg-[#b08842]" />
               Service 0{index + 1}
             </p>
-            <h3 className="text-[clamp(1.75rem,2.5vw,2.5rem)] font-semibold text-foreground mb-4 tracking-tight">
+            <h3 className="text-[clamp(1.75rem,2.5vw,2.5rem)] font-semibold text-foreground mb-3 tracking-tight">
               {service.title}
             </h3>
             <p className="text-[15px] text-[#b08842] font-medium mb-5 tracking-wide">
               {service.tagline}
             </p>
-            <p className="text-body-lg max-w-xl mb-7">
+            <p className="text-[15px] text-foreground/70 font-normal leading-relaxed mb-7 max-w-xl">
               {service.description}
             </p>
 
-            {/* Benefits list */}
-            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+            {/* Benefits list — 2-column grid */}
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5 mb-8">
               {service.benefits.map((benefit, bi) => (
                 <li
                   key={bi}
@@ -407,15 +407,17 @@ function ServiceAlternatingSection({
               ))}
             </ul>
 
-            <LuxuryButton
-              size="md"
-              variant="solid-dark"
-              onClick={onBook}
-            >
-              {service.cta}
-              <ArrowRight size={13} strokeWidth={2} />
-            </LuxuryButton>
-          </Reveal>
+            <div>
+              <LuxuryButton
+                size="md"
+                variant="solid-dark"
+                onClick={onBook}
+              >
+                {service.cta}
+                <ArrowRight size={13} strokeWidth={2} />
+              </LuxuryButton>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -423,15 +425,27 @@ function ServiceAlternatingSection({
 }
 
 // =====================================================
-// FAQ Accordion
+// FAQ Accordion — always visible, no Reveal wrapper
 // =====================================================
-function FaqAccordion({ question, answer }: { question: string; answer: string }) {
+function FaqAccordion({
+  question,
+  answer,
+  index,
+}: {
+  question: string;
+  answer: string;
+  index: number;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-30px" }}
+      transition={{ duration: 0.4, delay: Math.min(index * 30, 200), ease: [0.16, 1, 0.3, 1] }}
       className={cn(
-        "rounded-md border transition-all duration-300 overflow-hidden",
+        "rounded-xl border transition-all duration-300 overflow-hidden",
         open
           ? "border-[#b08842]/40 bg-card shadow-[0_15px_40px_-20px_rgba(176,136,66,0.25)]"
           : "border-foreground/[0.10] bg-card hover:border-foreground/20",
@@ -474,6 +488,6 @@ function FaqAccordion({ question, answer }: { question: string; answer: string }
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }
