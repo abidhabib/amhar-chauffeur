@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { api } from "@/lib/api-client";
-import { ROLE_META, USER_ROLES, type UserRole } from "@/lib/services/user.service";
+import { ROLE_META, USER_ROLES, type UserRole } from "@/lib/user-roles";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 

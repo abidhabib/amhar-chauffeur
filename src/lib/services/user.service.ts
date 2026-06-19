@@ -1,26 +1,14 @@
 /**
  * User Service — admin staff management (not customer accounts)
+ *
+ * NOTE: Role constants/types live in `@/lib/user-roles.ts` (no DB imports).
+ * Client components should import from there to avoid pulling in Prisma/pg.
  */
 import { userRepository } from "@/lib/repositories/user.repository";
 import { activityRepository } from "@/lib/repositories/activity.repository";
 
-export const USER_ROLES = ["super_admin", "manager", "operator"] as const;
-export type UserRole = (typeof USER_ROLES)[number];
-
-export const ROLE_META: Record<UserRole, { label: string; description: string }> = {
-  super_admin: {
-    label: "Super Admin",
-    description: "Full system access including user management and audit logs",
-  },
-  manager: {
-    label: "Manager",
-    description: "Manage leads, fleet, reviews, and view audit logs",
-  },
-  operator: {
-    label: "Operator",
-    description: "Handle assigned leads, add notes, update statuses",
-  },
-};
+// Re-export for backwards compatibility (server-side imports)
+export { USER_ROLES, ROLE_META, type UserRole } from "@/lib/user-roles";
 
 export const userService = {
   async list() {
