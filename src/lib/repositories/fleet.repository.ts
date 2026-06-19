@@ -29,11 +29,12 @@ type FleetCreateData = {
   isFeatured: boolean;
 };
 
-function serializeWithRelations(f: Fleet & { reviews?: any[]; images?: any[] }) {
+function serializeWithRelations(f: any) {
+  // Postgres native arrays — no JSON parsing needed
   return {
     ...f,
-    galleryImages: f.galleryImages ? (JSON.parse(f.galleryImages) as string[]) : [],
-    features: f.features ? (JSON.parse(f.features) as string[]) : [],
+    galleryImages: f.galleryImages ?? [],
+    features: f.features ?? [],
     images: f.images ?? [],
     reviews: f.reviews ?? [],
   };
@@ -44,8 +45,9 @@ export const fleetRepository = {
     return db.fleet.create({
       data: {
         ...data,
-        galleryImages: JSON.stringify(data.galleryImages),
-        features: JSON.stringify(data.features),
+        // Postgres native arrays — pass directly
+        galleryImages: data.galleryImages,
+        features: data.features,
       },
     });
   },
@@ -124,8 +126,8 @@ export const fleetRepository = {
     if (data.taxRate !== undefined) payload.taxRate = data.taxRate;
     if (data.description !== undefined) payload.description = data.description;
     if (data.imageUrl !== undefined) payload.imageUrl = data.imageUrl;
-    if (data.galleryImages !== undefined) payload.galleryImages = JSON.stringify(data.galleryImages);
-    if (data.features !== undefined) payload.features = JSON.stringify(data.features);
+    if (data.galleryImages !== undefined) payload.galleryImages = data.galleryImages;
+    if (data.features !== undefined) payload.features = data.features;
     if (data.displayOrder !== undefined) payload.displayOrder = data.displayOrder;
     if (data.isVisible !== undefined) payload.isVisible = data.isVisible;
     if (data.isAvailable !== undefined) payload.isAvailable = data.isAvailable;

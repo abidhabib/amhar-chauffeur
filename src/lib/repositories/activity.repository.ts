@@ -20,7 +20,8 @@ export const activityRepository = {
         action: data.action,
         entityType: data.entityType,
         entityId: data.entityId,
-        metadata: data.metadata ? JSON.stringify(data.metadata) : null,
+        // Postgres Json type — pass object directly
+        metadata: (data.metadata ?? null) as any,
         ipAddress: data.ipAddress ?? null,
         leadId: data.leadId ?? null,
       },

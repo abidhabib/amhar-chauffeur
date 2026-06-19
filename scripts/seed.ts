@@ -8,10 +8,20 @@
  *  - 8-15 reviews per vehicle (100+ total reviews)
  *  - 10 client testimonials (site-level)
  *  - 6 sample leads across all statuses
+ *
+ * Uses the PGlite-backed Prisma client (same as src/lib/db.ts) so the seed
+ * writes to the local PGlite Postgres database.
  */
+import { PGlite } from "@electric-sql/pglite";
+import { PrismaPGlite } from "pglite-prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 
-const db = new PrismaClient();
+const DATA_DIR = "/home/z/my-project/db/pglite";
+
+const pglite = new PGlite({ dataDir: DATA_DIR });
+await pglite.waitReady;
+const adapter = new PrismaPGlite(pglite);
+const db = new PrismaClient({ adapter });
 
 async function main() {
   console.log("→ Seeding AMHAR database v2…");
@@ -303,8 +313,9 @@ async function main() {
       await db.fleet.create({
         data: {
           ...v,
-          galleryImages: JSON.stringify(v.galleryImages),
-          features: JSON.stringify(v.features),
+          // Postgres native arrays — pass directly
+          galleryImages: v.galleryImages,
+          features: v.features,
         } as any,
       });
     }
@@ -454,7 +465,7 @@ async function main() {
         entityType: "lead",
         entityId: created.id,
         leadId: created.id,
-        metadata: JSON.stringify({ reference: created.reference, fullName: created.fullName }),
+        metadata: { reference: created.reference, fullName: created.fullName } as any,
       },
     });
 
@@ -493,4 +504,5 @@ main()
   })
   .finally(async () => {
     await db.$disconnect();
+    await pglite.close();
   });

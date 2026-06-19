@@ -1,14 +1,15 @@
 // =====================================================================
 // AMHAR — Luxury Chauffeur Lead Management Platform
-// Prisma schema
+// Prisma schema — PostgreSQL
 // =====================================================================
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -88,15 +89,15 @@ model Fleet {
   // Capacity
   seats         Int
   luggage       Int
-  carryOn      Int      @default(0)
+  carryOn       Int      @default(0)
   // Pricing (in SAR) — used for instant quote
-  baseFare      Float   @default(0)
-  taxRate       Float   @default(0.15) // 15% VAT in KSA
-  // Content
+  baseFare      Float    @default(0)
+  taxRate       Float    @default(0.15) // 15% VAT in KSA
+  // Content — Postgres native arrays
   description   String?
   imageUrl      String?
-  galleryImages String? // JSON-encoded array of URLs
-  features      String? // JSON-encoded array of amenity slugs
+  galleryImages String[] @default([])
+  features      String[] @default([])
   // Display + state
   displayOrder  Int      @default(0)
   isVisible     Boolean  @default(true)  // shown on landing
@@ -200,7 +201,7 @@ model ActivityLog {
   action     String // lead.created | lead.status_changed | lead.assigned | fleet.created | ...
   entityType String // lead | fleet | review | user
   entityId   String
-  metadata   String? // JSON string
+  metadata   Json?
   ipAddress  String?
   leadId     String?
   createdAt  DateTime @default(now())
