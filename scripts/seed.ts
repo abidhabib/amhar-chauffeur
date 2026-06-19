@@ -1,21 +1,20 @@
 /**
- * AMHAR — Database seed script
+ * AMHAR — Database seed script v2
  * Run with: bun run scripts/seed.ts
  *
  * Seeds:
- *  - 1 super_admin user (the operator)
- *  - 2 staff users (manager, operator)
- *  - 16 luxury fleet vehicles
- *  - 8 client testimonials (approved)
- *  - 2 pending reviews
- *  - 6 sample leads (across statuses)
+ *  - 3 admin users (super_admin, manager, operator)
+ *  - 10 luxury vehicles with realistic pricing, images, amenities
+ *  - 8-15 reviews per vehicle (100+ total reviews)
+ *  - 10 client testimonials (site-level)
+ *  - 6 sample leads across all statuses
  */
 import { PrismaClient } from "@prisma/client";
 
 const db = new PrismaClient();
 
 async function main() {
-  console.log("→ Seeding AMHAR database…");
+  console.log("→ Seeding AMHAR database v2…");
 
   // ---------------- Users ----------------
   const superAdmin = await db.user.upsert({
@@ -55,117 +54,344 @@ async function main() {
 
   // ---------------- Fleet ----------------
   const fleetData = [
-    // Sedans
-    { name: "Rolls Royce Phantom", slug: "rolls-royce", brand: "Rolls Royce", category: "sedan", seats: 3, luggage: 2, order: 1,
-      description: "Handcrafted luxury. Whisper-quiet ride. The benchmark of automotive excellence.",
-      imageUrl: "https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=1200&q=80",
-      features: ["Privacy partition", "Handcrafted interior", "Whisper-quiet cabin", "Champagne console"] },
-    { name: "Mercedes S-Class", slug: "mercedes-s-class", brand: "Mercedes-Benz", category: "sedan", seats: 3, luggage: 2, order: 2,
-      description: "The definitive executive sedan. Cutting-edge comfort, timeless presence.",
+    {
+      name: "Mercedes-Benz S-Class",
+      slug: "mercedes-s-class",
+      category: "sedan",
+      vehicleClass: "first_class",
+      brand: "Mercedes-Benz",
+      model: "S 580",
+      year: 2024,
+      seats: 3,
+      luggage: 3,
+      carryOn: 2,
+      baseFare: 850,
+      taxRate: 0.15,
+      description: "The definitive executive sedan. Cutting-edge comfort with the legendary S-Class presence. Burmester audio, massage seats, ambient lighting.",
       imageUrl: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=1200&q=80",
-      features: ["Massage seats", "Burmester audio", "Ambient lighting", "Wi-Fi"] },
-    { name: "BMW 7 Series", slug: "bmw-7", brand: "BMW", category: "sedan", seats: 3, luggage: 2, order: 3,
-      description: "Dynamic, refined, and quietly assertive. The driver's luxury sedan.",
+      galleryImages: [
+        "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1600&q=80",
+      ],
+      features: ["meet_greet", "flight_tracking", "free_waiting", "free_cancellation", "phone_chargers", "bottled_water", "sanitizing_wipes", "premium_interior", "wifi", "leather_seats"],
+      displayOrder: 1,
+      isVisible: true,
+      isAvailable: true,
+      isFeatured: true,
+    },
+    {
+      name: "Mercedes-Benz EQE",
+      slug: "mercedes-eqe",
+      category: "sedan",
+      vehicleClass: "business_class",
+      brand: "Mercedes-Benz",
+      model: "EQE 350",
+      year: 2024,
+      seats: 3,
+      luggage: 2,
+      carryOn: 2,
+      baseFare: 650,
+      taxRate: 0.15,
+      description: "All-electric executive sedan. Whisper-quiet, zero emissions, with the range for cross-city journeys.",
+      imageUrl: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=1200&q=80",
+      galleryImages: [
+        "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=1600&q=80",
+      ],
+      features: ["meet_greet", "flight_tracking", "free_waiting", "free_cancellation", "phone_chargers", "bottled_water", "premium_interior", "wifi", "climate_control", "leather_seats"],
+      displayOrder: 2,
+      isVisible: true,
+      isAvailable: true,
+      isFeatured: false,
+    },
+    {
+      name: "Mercedes-Benz V-Class",
+      slug: "mercedes-v-class",
+      category: "van",
+      vehicleClass: "business_van",
+      brand: "Mercedes-Benz",
+      model: "V 250",
+      year: 2024,
+      seats: 7,
+      luggage: 7,
+      carryOn: 4,
+      baseFare: 950,
+      taxRate: 0.15,
+      description: "First-class travel for groups up to 7. Configurable captain's chairs, conference seating, privacy partition.",
+      imageUrl: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1200&q=80",
+      galleryImages: [
+        "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1600&q=80",
+      ],
+      features: ["meet_greet", "flight_tracking", "free_waiting", "free_cancellation", "phone_chargers", "bottled_water", "sanitizing_wipes", "premium_interior", "wifi", "climate_control", "leather_seats", "privacy_partition"],
+      displayOrder: 10,
+      isVisible: true,
+      isAvailable: true,
+      isFeatured: true,
+    },
+    {
+      name: "BMW 7 Series",
+      slug: "bmw-7-series",
+      category: "sedan",
+      vehicleClass: "first_class",
+      brand: "BMW",
+      model: "750i xDrive",
+      year: 2024,
+      seats: 3,
+      luggage: 3,
+      carryOn: 2,
+      baseFare: 820,
+      taxRate: 0.15,
+      description: "Dynamic, refined, and quietly assertive. The driver's luxury sedan with executive lounge seating and Sky Lounge roof.",
       imageUrl: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80",
-      features: ["Executive lounge seating", "Sky Lounge roof", "Wi-Fi", "Bowers & Wilkins audio"] },
-    { name: "Audi A8", slug: "audi-a8", brand: "Audi", category: "sedan", seats: 3, luggage: 2, order: 4,
-      description: "Quietly technical, impeccably finished. The thinking person's luxury sedan.",
-      imageUrl: "https://images.unsplash.com/photo-1606016159991-d4b29a55b6a2?auto=format&fit=crop&w=1200&q=80",
-      features: ["Bang & Olufsen audio", "Massage seats", "Quattro all-wheel drive", "Wi-Fi"] },
-    { name: "Lexus ES", slug: "lexus-es", brand: "Lexus", category: "sedan", seats: 3, luggage: 2, order: 5,
-      description: "Japanese omotenaki hospitality in motion. Refined and serene.",
+      galleryImages: [
+        "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1600&q=80",
+      ],
+      features: ["meet_greet", "flight_tracking", "free_waiting", "free_cancellation", "phone_chargers", "bottled_water", "sanitizing_wipes", "premium_interior", "wifi", "leather_seats", "climate_control"],
+      displayOrder: 3,
+      isVisible: true,
+      isAvailable: true,
+      isFeatured: false,
+    },
+    {
+      name: "BMW i7",
+      slug: "bmw-i7",
+      category: "sedan",
+      vehicleClass: "first_class",
+      brand: "BMW",
+      model: "i7 xDrive60",
+      year: 2024,
+      seats: 3,
+      luggage: 3,
+      carryOn: 2,
+      baseFare: 920,
+      taxRate: 0.15,
+      description: "The electric flagship. Zero-emission luxury with the BMW Theatre Screen and Executive Lounge rear seats.",
       imageUrl: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1200&q=80",
-      features: ["Mark Levinson audio", "Hybrid powertrain", "Semi-aniline leather", "Wi-Fi"] },
-    { name: "Range Rover Autobiography", slug: "range-rover", brand: "Land Rover", category: "sedan", seats: 3, luggage: 3, order: 6,
-      description: "British luxury with go-anywhere capability. Equally at home at the hotel or the dunes.",
+      galleryImages: [
+        "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1600&q=80",
+      ],
+      features: ["meet_greet", "flight_tracking", "free_waiting", "free_cancellation", "phone_chargers", "bottled_water", "sanitizing_wipes", "premium_interior", "wifi", "leather_seats", "climate_control"],
+      displayOrder: 4,
+      isVisible: true,
+      isAvailable: true,
+      isFeatured: true,
+    },
+    {
+      name: "Audi A8 L",
+      slug: "audi-a8-l",
+      category: "sedan",
+      vehicleClass: "first_class",
+      brand: "Audi",
+      model: "A8 L 60 TFSI",
+      year: 2024,
+      seats: 3,
+      luggage: 3,
+      carryOn: 2,
+      baseFare: 780,
+      taxRate: 0.15,
+      description: "Quietly technical, impeccably finished. The thinking person's luxury sedan with Bang & Olufsen audio and heated rear seats with foot massagers.",
+      imageUrl: "https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?auto=format&fit=crop&w=1200&q=80",
+      galleryImages: [
+        "https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?auto=format&fit=crop&w=1600&q=80",
+      ],
+      features: ["meet_greet", "flight_tracking", "free_waiting", "free_cancellation", "phone_chargers", "bottled_water", "sanitizing_wipes", "premium_interior", "wifi", "leather_seats", "climate_control"],
+      displayOrder: 5,
+      isVisible: true,
+      isAvailable: true,
+      isFeatured: false,
+    },
+    {
+      name: "Lexus ES 350",
+      slug: "lexus-es-350",
+      category: "sedan",
+      vehicleClass: "business_class",
+      brand: "Lexus",
+      model: "ES 350 Luxury",
+      year: 2024,
+      seats: 3,
+      luggage: 2,
+      carryOn: 2,
+      baseFare: 550,
+      taxRate: 0.15,
+      description: "Japanese omotenashi hospitality in motion. Refined, serene, and famously reliable.",
+      imageUrl: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1200&q=80",
+      galleryImages: [
+        "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1600&q=80",
+      ],
+      features: ["meet_greet", "flight_tracking", "free_waiting", "free_cancellation", "phone_chargers", "bottled_water", "premium_interior", "wifi", "climate_control", "leather_seats"],
+      displayOrder: 6,
+      isVisible: true,
+      isAvailable: true,
+      isFeatured: false,
+    },
+    {
+      name: "Cadillac Escalade",
+      slug: "cadillac-escalade",
+      category: "suv",
+      vehicleClass: "first_class",
+      brand: "Cadillac",
+      model: "Escalade Premium Luxury",
+      year: 2024,
+      seats: 6,
+      luggage: 6,
+      carryOn: 4,
+      baseFare: 1100,
+      taxRate: 0.15,
+      description: "American luxury, writ large. Presence, space, and authority in equal measure. Curved OLED display and AKG studio audio.",
+      imageUrl: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1200&q=80",
+      galleryImages: [
+        "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1600&q=80",
+      ],
+      features: ["meet_greet", "flight_tracking", "free_waiting", "free_cancellation", "phone_chargers", "bottled_water", "sanitizing_wipes", "premium_interior", "wifi", "leather_seats", "climate_control"],
+      displayOrder: 20,
+      isVisible: true,
+      isAvailable: true,
+      isFeatured: true,
+    },
+    {
+      name: "GMC Yukon XL",
+      slug: "gmc-yukon-xl",
+      category: "suv",
+      vehicleClass: "business_van",
+      brand: "GMC",
+      model: "Yukon XL Denali",
+      year: 2024,
+      seats: 7,
+      luggage: 7,
+      carryOn: 4,
+      baseFare: 880,
+      taxRate: 0.15,
+      description: "Spacious, refined, and capable. The understated American SUV — ideal for families and groups.",
+      imageUrl: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1200&q=80",
+      galleryImages: [
+        "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1600&q=80",
+      ],
+      features: ["meet_greet", "flight_tracking", "free_waiting", "free_cancellation", "phone_chargers", "bottled_water", "premium_interior", "wifi", "climate_control"],
+      displayOrder: 21,
+      isVisible: true,
+      isAvailable: true,
+      isFeatured: false,
+    },
+    {
+      name: "Range Rover Autobiography",
+      slug: "range-rover-autobiography",
+      category: "suv",
+      vehicleClass: "first_class",
+      brand: "Land Rover",
+      model: "Range Rover Autobiography",
+      year: 2024,
+      seats: 4,
+      luggage: 4,
+      carryOn: 3,
+      baseFare: 1200,
+      taxRate: 0.15,
+      description: "British luxury with go-anywhere capability. Equally at home at the hotel or the dunes. Meridian audio, executive Class rear seats.",
       imageUrl: "https://images.unsplash.com/photo-1606152421811-aa911307c6ae?auto=format&fit=crop&w=1200&q=80",
-      features: ["Meridian audio", "Executive seating", "All-terrain capability", "Wi-Fi"] },
-
-    // SUVs
-    { name: "Cadillac Escalade", slug: "cadillac-escalade", brand: "Cadillac", category: "suv", seats: 5, luggage: 5, order: 10,
-      description: "American luxury, writ large. Presence, space, and authority in equal measure.",
-      imageUrl: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1200&q=80",
-      features: ["Curved OLED display", "AKG audio", "Super Cruise", "Wi-Fi"] },
-    { name: "GMC Yukon Denali", slug: "gmc-yukon", brand: "GMC", category: "suv", seats: 5, luggage: 5, order: 11,
-      description: "Spacious, refined, and capable. The understated American SUV.",
-      imageUrl: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1200&q=80",
-      features: ["Bose audio", "Heated seats", "Tri-zone climate", "Wi-Fi"] },
-    { name: "Chevrolet Tahoe", slug: "chevrolet-tahoe", brand: "Chevrolet", category: "suv", seats: 5, luggage: 5, order: 12,
-      description: "Dependable, spacious, capable. The workhorse of the SUV fleet.",
-      imageUrl: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1200&q=80",
-      features: ["Heated seats", "Tri-zone climate", "Apple CarPlay", "Wi-Fi"] },
-
-    // Vans
-    { name: "Mercedes Sprinter", slug: "mercedes-sprinter", brand: "Mercedes-Benz", category: "van", seats: 15, luggage: 15, order: 20,
-      description: "First-class travel for groups. Configurable seating, refined finishes.",
-      imageUrl: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1200&q=80",
-      features: ["Leather captain's chairs", "Conference seating", "Wi-Fi", "Privacy glass"] },
-    { name: "Mercedes V-Class", slug: "mercedes-vino", brand: "Mercedes-Benz", category: "van", seats: 6, luggage: 6, order: 21,
-      description: "Intimate luxury for small groups. The private jet of the road.",
-      imageUrl: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1200&q=80",
-      features: ["Captain's chairs", "Privacy partition", "Wi-Fi", "Ambient lighting"] },
-    { name: "Toyota Hiace", slug: "toyota-hiace", brand: "Toyota", category: "van", seats: 14, luggage: 14, order: 22,
-      description: "Reliable, spacious, efficient. Group transport, simplified.",
-      imageUrl: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1200&q=80",
-      features: ["Air conditioning", "High roof", "Ample luggage"] },
-    { name: "Toyota Coaster", slug: "toyota-coaster", brand: "Toyota", category: "van", seats: 30, luggage: 30, order: 23,
-      description: "Dependable mini-coach for larger delegations. Air-conditioned throughout.",
-      imageUrl: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1200&q=80",
-      features: ["Air conditioning", "PA system", "Reclining seats"] },
-
-    // Buses
-    { name: "Mercedes Premium", slug: "mercedes-bus-premium", brand: "Mercedes-Benz", category: "bus", seats: 20, luggage: 20, order: 30,
-      description: "Executive mini-coach with lounge-style seating and conference layout.",
-      imageUrl: "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=1200&q=80",
-      features: ["Big sofa", "Conference layout", "Wi-Fi", "Entertainment system"] },
-    { name: "Mercedes Standard", slug: "mercedes-bus-standard", brand: "Mercedes-Benz", category: "bus", seats: 30, luggage: 30, order: 31,
-      description: "Comfortable, capable, refined. Group travel done properly.",
-      imageUrl: "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=1200&q=80",
-      features: ["Reclining seats", "Air conditioning", "PA system"] },
-    { name: "Mercedes Deluxe", slug: "mercedes-bus-deluxe", brand: "Mercedes-Benz", category: "bus", seats: 30, luggage: 30, order: 32,
-      description: "Premium appointments throughout. The top of the Mercedes coach range.",
-      imageUrl: "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=1200&q=80",
-      features: ["Premium leather", "Wi-Fi", "Entertainment system", "Refreshment bar"] },
+      galleryImages: [
+        "https://images.unsplash.com/photo-1606152421811-aa911307c6ae?auto=format&fit=crop&w=1600&q=80",
+      ],
+      features: ["meet_greet", "flight_tracking", "free_waiting", "free_cancellation", "phone_chargers", "bottled_water", "sanitizing_wipes", "premium_interior", "wifi", "leather_seats", "climate_control"],
+      displayOrder: 22,
+      isVisible: true,
+      isAvailable: true,
+      isFeatured: true,
+    },
   ];
 
   for (const v of fleetData) {
-    await db.fleet.upsert({
-      where: { slug: v.slug },
-      update: {},
-      create: {
-        name: v.name,
-        slug: v.slug,
-        brand: v.brand,
-        category: v.category,
-        seats: v.seats,
-        luggage: v.luggage,
-        description: v.description,
-        imageUrl: v.imageUrl,
-        features: JSON.stringify(v.features),
-        displayOrder: v.order,
-        isVisible: true,
-      },
-    });
+    const existing = await db.fleet.findUnique({ where: { slug: v.slug } });
+    if (!existing) {
+      await db.fleet.create({
+        data: {
+          ...v,
+          galleryImages: JSON.stringify(v.galleryImages),
+          features: JSON.stringify(v.features),
+        } as any,
+      });
+    }
   }
   console.log(`  ✓ Fleet: ${fleetData.length} vehicles`);
 
-  // ---------------- Reviews ----------------
-  const reviewData = [
+  // ---------------- Per-vehicle Reviews ----------------
+  const reviewNames = [
+    "James Whitfield", "Aisha Al-Otaibi", "Chen Wei", "Mohammed Al-Faisal", "Sofia Romano",
+    "Hiroshi Tanaka", "Ali Abdallah", "Rabbi Hasan", "Emma Lou", "Tahani Al-Bassam",
+    "Abdulaziz Alzouman", "Mathi Venkat", "Engr Abbas Khan", "Mike Accardo", "Sarah Mitchell",
+    "Khalid Al-Saud", "Lena Müller", "Pierre Dubois", "Fatima Al-Zahra", "Daniel Cohen",
+  ];
+  const reviewCountries = [
+    "Saudi Arabia", "United Kingdom", "China", "Saudi Arabia", "Italy",
+    "Japan", "Jordan", "Pakistan", "United States", "Saudi Arabia",
+    "Saudi Arabia", "India", "Pakistan", "United States", "Australia",
+    "Saudi Arabia", "Germany", "France", "Bahrain", "Israel",
+  ];
+  const reviewTemplates = [
+    { title: "Outstanding service", body: "The chauffeur was professional, punctual, and made the journey effortless. Vehicle was immaculate. Will book again." },
+    { title: "Five-star experience", body: "From booking to drop-off, everything was seamless. The driver arrived early and was extremely courteous." },
+    { title: "Highly recommended", body: "Excellent service from start to finish. The vehicle was clean, comfortable, and the chauffeur knew every back route." },
+    { title: "Premium and reliable", body: "I've used this service multiple times for business travel. Consistently excellent. The drivers speak good English." },
+    { title: "Best in Riyadh", body: "By far the best chauffeur service I've used in Saudi Arabia. The Mercedes was pristine and the driver was outstanding." },
+    { title: "Effortless airport pickup", body: "Flight tracking worked perfectly — the driver was waiting exactly when I landed. Meet & greet was a nice touch." },
+    { title: "Worth every riyal", body: "Yes it's premium-priced but the experience justifies it. Discreet, professional, and reliable." },
+    { title: "Corporate favourite", body: "We use this for all our executive transport. Never had an issue. The admin portal makes managing bookings easy." },
+    { title: "Smooth and discreet", body: "The chauffeur was discreet, the car was whisper-quiet, and I could take calls in privacy. Perfect." },
+    { title: "Will use again", body: "Booked for a full day of meetings. Driver was patient, car was comfortable, scheduling was flexible." },
+    { title: "Excellent for VIPs", body: "We booked this for a visiting executive. The protocol was impeccable and the vehicle was top-tier." },
+    { title: "Smooth wedding transfer", body: "Used for our wedding. The Rolls Royce arrived spotless, driver was professional. Made the day feel special." },
+    { title: "Reliable for early flights", body: "4am pickup for an early flight. Driver arrived 10 minutes early, no hassle, smooth ride to the airport." },
+    { title: "Top-notch chauffeur", body: "Mujahid was my driver — went out of his way to make the multi-day trip smooth. 5+ stars." },
+    { title: "Impressed", body: "First time using a chauffeur service in Riyadh. Exceeded expectations. Will recommend to colleagues." },
+  ];
+
+  const fleets = await db.fleet.findMany();
+  let reviewCount = 0;
+  for (const fleet of fleets) {
+    // Generate 8-15 reviews per vehicle
+    const numReviews = 8 + Math.floor(Math.random() * 8); // 8-15
+    for (let i = 0; i < numReviews; i++) {
+      const nameIdx = (fleets.indexOf(fleet) * 7 + i) % reviewNames.length;
+      const template = reviewTemplates[(fleets.indexOf(fleet) * 5 + i) % reviewTemplates.length];
+      const rating = i < numReviews * 0.7 ? 5 : i < numReviews * 0.95 ? 4 : 3; // mostly 5s
+      const reviewDate = new Date();
+      reviewDate.setDate(reviewDate.getDate() - Math.floor(Math.random() * 180));
+
+      const existing = await db.fleetReview.findFirst({
+        where: { fleetId: fleet.id, customerName: reviewNames[nameIdx], body: template.body },
+      });
+      if (existing) continue;
+
+      await db.fleetReview.create({
+        data: {
+          fleetId: fleet.id,
+          customerName: reviewNames[nameIdx],
+          country: reviewCountries[nameIdx],
+          rating,
+          title: template.title,
+          body: template.body,
+          reviewDate,
+          isVerified: true,
+          isApproved: true,
+        },
+      });
+      reviewCount++;
+    }
+  }
+  console.log(`  ✓ Fleet reviews: ${reviewCount} reviews across ${fleets.length} vehicles`);
+
+  // ---------------- Site-level Reviews ----------------
+  const siteReviewData = [
     { clientName: "Ali Abdallah", clientTitle: "Corporate Delegate", rating: 5, featured: true, body: "Thank you for the excellent hospitality and outstanding service provided by the team. Special thanks to Mr. Murtada and Mr. Basit for their support and warm reception from the airport until the end of the trip." },
     { clientName: "Rabbi Hasan", clientTitle: "Business Traveller", rating: 5, featured: true, body: "I had a great experience with this company. The driver was extremely professional, respectful, and made the entire journey comfortable and enjoyable. I truly appreciate the excellent service and would highly recommend others to use their services." },
     { clientName: "Emma Lou", clientTitle: "Returning Client", rating: 5, body: "I have used our wonderful trusted limo service many times since I have been in Saudi! So respectful and graceful — highly recommended without a doubt." },
-    { clientName: "Tahani B", clientTitle: "Corporate Travel Manager", rating: 5, featured: true, body: "We used Amhar chauffeur service for a full-day, multi-day company booking, and the experience was excellent from start to finish. The drivers were professional, punctual, and courteous. Communication was smooth, the vehicles were clean and comfortable, and everything was handled efficiently. Highly recommend for corporate transportation." },
-    { clientName: "Abdulaziz Alzouman", clientTitle: "VIP Client", rating: 5, body: "Absolutely outstanding chauffeur service. The company is professional, fast, and provides a truly high-end experience from start to finish. Their response time is excellent and everything is handled smoothly and efficiently. Highly recommended." },
+    { clientName: "Tahani B", clientTitle: "Corporate Travel Manager", rating: 5, featured: true, body: "We used Amhar chauffeur service for a full-day, multi-day company booking, and the experience was excellent from start to finish. The drivers were professional, punctual, and courteous. Highly recommend for corporate transportation." },
+    { clientName: "Abdulaziz Alzouman", clientTitle: "VIP Client", rating: 5, body: "Absolutely outstanding chauffeur service. The company is professional, fast, and provides a truly high-end experience from start to finish. Highly recommended." },
     { clientName: "Mathi Venkat", clientTitle: "IHI Corporation", rating: 5, body: "We booked for a Riyadh trip and the service was very, very good. Our driver Basit Khan is a very nice guy. We are happy to say — the best." },
     { clientName: "Engr Abbas Khan", clientTitle: "Executive", rating: 5, body: "I appreciate the service provided by Amhar Chauffeur. It was prompt, clean, and respectful. Thank you to the Amhar Service team." },
-    { clientName: "Mike Accardo", clientTitle: "Business Traveller", rating: 5, body: "Mujahid was my driver this week — my first time in Riyadh for business. He was fantastic and went out of his way to make my multi-day travel as smooth as possible. I will be requesting him by name the next time I am in Riyadh. Five stars and then some." },
-
-    // Pending (unapproved)
+    { clientName: "Mike Accardo", clientTitle: "Business Traveller", rating: 5, body: "Mujahid was my driver this week — my first time in Riyadh for business. He was fantastic and went out of his way to make my multi-day travel as smooth as possible. Five stars and then some." },
     { clientName: "Sarah Mitchell", clientTitle: "Tourist", rating: 5, body: "Just used Amhar for a tour of Diriyah. Wonderful service and the Mercedes S-Class was immaculate. Our driver spoke excellent English." },
-    { clientName: "Khalid Al-Saud", clientTitle: "VIP", rating: 5, body: "Outstanding service from booking to drop-off. The Rolls Royce was pristine and the chauffeur knew every back route. Will use again." },
+    { clientName: "Khalid Al-Saud", clientTitle: "VIP", rating: 5, body: "Outstanding service from booking to drop-off. The Range Rover was pristine and the chauffeur knew every back route. Will use again." },
   ];
 
-  for (const [i, r] of reviewData.entries()) {
+  for (const [i, r] of siteReviewData.entries()) {
     const existing = await db.review.findFirst({ where: { clientName: r.clientName } });
     if (!existing) {
       await db.review.create({
@@ -182,9 +408,9 @@ async function main() {
       });
     }
   }
-  console.log(`  ✓ Reviews: ${reviewData.length} (${reviewData.length - 2} approved, 2 pending)`);
+  console.log(`  ✓ Site reviews: ${siteReviewData.length} (${siteReviewData.length - 2} approved, 2 pending)`);
 
-  // ---------------- Sample leads ----------------
+  // ---------------- Sample Leads ----------------
   const leadData = [
     { fullName: "James Whitfield", email: "j.whitfield@example.com", phone: "501234567", pickup: "King Khalid International Airport, T1", destination: "The Ritz-Carlton, Riyadh", date: 7, time: "14:30", cat: "sedan", pax: 2, lug: 3, status: "new" },
     { fullName: "Aisha Al-Otaibi", email: "aisha@example.com", phone: "552345678", pickup: "Four Seasons, Riyadh", destination: "King Abdulaziz Conference Center", date: 3, time: "08:00", cat: "suv", pax: 4, lug: 2, status: "contacted", assigned: manager.id },
@@ -221,7 +447,6 @@ async function main() {
       },
     });
 
-    // Activity log for created leads
     await db.activityLog.create({
       data: {
         userId: null,
@@ -242,16 +467,6 @@ async function main() {
           kind: "assignment",
         },
       });
-      await db.activityLog.create({
-        data: {
-          userId: l.assigned,
-          action: "lead.assigned",
-          entityType: "lead",
-          entityId: created.id,
-          leadId: created.id,
-          metadata: JSON.stringify({ reference: created.reference, to: l.assigned }),
-        },
-      });
     }
 
     if (l.status !== "new") {
@@ -267,7 +482,7 @@ async function main() {
   }
   console.log(`  ✓ Sample leads: ${leadData.length}`);
 
-  console.log("\n✓ Seed complete.");
+  console.log("\n✓ Seed v2 complete.");
   console.log("  Admin emails: mir@amharksa.com, basit@amharksa.com, murtada@amharksa.com");
 }
 

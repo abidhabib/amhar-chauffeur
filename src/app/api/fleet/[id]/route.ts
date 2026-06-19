@@ -1,13 +1,33 @@
 /**
- * PATCH  /api/fleet/:id  — update (admin)
- * DELETE /api/fleet/:id  — delete (admin)
+ * GET    /api/fleet/:slug  — fetch fleet by slug (with reviews + stats)
+ * PATCH  /api/fleet/:id   — update (admin)
+ * DELETE /api/fleet/:id   — delete (admin)
+ *
+ * The :param can be either a slug (for public detail page) or an id (for admin).
+ * We try slug first, then fall back to id.
  */
 import { NextRequest, NextResponse } from "next/server";
 import { fleetService } from "@/lib/services/fleet.service";
+import { fleetRepository } from "@/lib/repositories/fleet.repository";
 import { updateFleetSchema } from "@/lib/dto/fleet.dto";
 import { z } from "zod";
 
 const ACTOR_ID_HEADER = "x-amhar-actor-id";
+
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
+  // Try slug first (public usage)
+  let fleet = await fleetService.getBySlug(id);
+  // Fall back to id (admin usage)
+  if (!fleet) {
+    fleet = await fleetService.getById(id);
+  }
+  if (!fleet) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  return NextResponse.json(fleet);
+}
 
 export async function PATCH(
   req: NextRequest,

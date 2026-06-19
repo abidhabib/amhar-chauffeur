@@ -13,11 +13,10 @@ import { SERVICES_CATALOG, type ServiceSlug } from "@/lib/services-catalog";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
-  { href: "#services", label: "Services" },
-  { href: "#fleet", label: "Fleet" },
+  { href: "services", label: "Services", isPage: true },
   { href: "#how", label: "How it works" },
   { href: "#testimonials", label: "Clients" },
-];
+] as const;
 
 const SERVICE_ICONS: Record<ServiceSlug, React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>> = {
   "city-to-city": MapPin,
@@ -36,6 +35,8 @@ export function LandingNav() {
   const openBooking = useBookingStore((s) => s.openModal);
   const setActiveService = useViewStore((s) => s.setActiveService);
   const setBookingTab = useViewStore((s) => s.setBookingTab);
+  const goServices = useViewStore((s) => s.goServices);
+  const goHome = useViewStore((s) => s.goHome);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80);
@@ -121,7 +122,7 @@ export function LandingNav() {
               href="#top"
               onClick={(e) => {
                 e.preventDefault();
-                setActiveService(null);
+                goHome();
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
               className="flex items-center gap-3 group"
@@ -255,16 +256,22 @@ export function LandingNav() {
               {/* Plain nav links */}
               {NAV_LINKS.map((link) => {
                 const active = activeSection === link.href;
+                const isPageLink = "isPage" in link && link.isPage;
                 return (
                   <a
                     key={link.href}
                     href={link.href}
                     onClick={(e) => {
                       e.preventDefault();
-                      handleNavClick(link.href);
+                      if (isPageLink) {
+                        // Navigate to the services page
+                        goServices();
+                      } else {
+                        handleNavClick(link.href);
+                      }
                     }}
                     className={cn(
-                      "relative text-[13px] tracking-[0.14em] uppercase transition-colors duration-200 font-medium",
+                      "relative text-[13px] tracking-[0.14em] uppercase transition-colors duration-200 font-medium cursor-pointer",
                       onDark
                         ? (active ? "text-[#f6f1e9]" : "text-[#f6f1e9]/65 hover:text-[#f6f1e9]")
                         : (active ? "text-foreground" : "text-foreground/60 hover:text-foreground"),
@@ -416,15 +423,27 @@ export function LandingNav() {
                   transition={{ delay: 0.5, duration: 0.4 }}
                   className="grid grid-cols-2 gap-3 pt-5 border-t border-[#f6f1e9]/10"
                 >
-                  {NAV_LINKS.map((link) => (
-                    <button
-                      key={link.href}
-                      onClick={() => handleNavClick(link.href)}
-                      className="text-[12px] tracking-[0.16em] uppercase text-[#f6f1e9]/65 hover:text-[#d4b876] font-semibold transition-colors text-left py-2"
-                    >
-                      {link.label}
-                    </button>
-                  ))}
+                  {NAV_LINKS.map((link) => {
+                    const isPageLink = "isPage" in link && link.isPage;
+                    return (
+                      <button
+                        key={link.href}
+                        onClick={() => {
+                          setMobileOpen(false);
+                          setTimeout(() => {
+                            if (isPageLink) {
+                              goServices();
+                            } else {
+                              handleNavClick(link.href);
+                            }
+                          }, 100);
+                        }}
+                        className="text-[12px] tracking-[0.16em] uppercase text-[#f6f1e9]/65 hover:text-[#d4b876] font-semibold transition-colors text-left py-2"
+                      >
+                        {link.label}
+                      </button>
+                    );
+                  })}
                 </motion.div>
               </div>
 

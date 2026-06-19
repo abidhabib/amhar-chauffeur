@@ -77,8 +77,30 @@ export const api = {
     }),
 
   // Fleet
-  listFleet: (all = false) =>
-    request<{ items: any[] }>(`/api/fleet${all ? "?all=1" : ""}`),
+  listFleet: (all = false, available?: boolean) => {
+    const params = new URLSearchParams();
+    if (all) params.set("all", "1");
+    if (available !== undefined) params.set("available", available ? "1" : "0");
+    const q = params.toString();
+    return request<{ items: any[] }>(`/api/fleet${q ? `?${q}` : ""}`);
+  },
+  searchFleet: (params: {
+    category?: string;
+    vehicleClass?: string;
+    minSeats?: number;
+    available?: boolean;
+    sort?: string;
+  }) => {
+    const q = new URLSearchParams();
+    Object.entries(params).forEach(([k, v]) => {
+      if (v !== undefined && v !== null && v !== "") q.set(k, String(v));
+    });
+    return request<{ items: any[] }>(`/api/fleet/search?${q.toString()}`);
+  },
+  getFleetBySlug: (slug: string) =>
+    request<any>(`/api/fleet/${slug}`),
+  getFleetReviews: (fleetId: string) =>
+    request<{ items: any[]; stats: any }>(`/api/fleet/${fleetId}/reviews`),
   createFleet: (input: any) =>
     request<any>(`/api/fleet`, { method: "POST", body: JSON.stringify(input) }),
   updateFleet: (id: string, input: any) =>

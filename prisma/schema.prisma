@@ -72,25 +72,85 @@ model LeadNote {
 
 // ---------------------------------------------------------------------
 // FLEET — luxury vehicles available for hire
+// Extended: model year, base fare, tax, vehicle class, amenities,
+// availability, featured flag, sort order, per-vehicle reviews + images
 // ---------------------------------------------------------------------
 model Fleet {
-  id           String   @id @default(cuid())
-  name         String
-  slug         String   @unique
-  category     String // sedan | suv | van | bus
-  brand        String
-  seats        Int
-  luggage      Int
-  description  String?
-  imageUrl     String?
-  features     String? // JSON-encoded array
-  displayOrder Int      @default(0)
-  isVisible    Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id            String   @id @default(cuid())
+  name          String
+  slug          String   @unique
+  // Vehicle classification (used in search filters)
+  category      String   // sedan | suv | van | bus
+  vehicleClass  String   // business_class | business_van | first_class | economy
+  brand         String
+  model         String?
+  year          Int?
+  // Capacity
+  seats         Int
+  luggage       Int
+  carryOn      Int      @default(0)
+  // Pricing (in SAR) — used for instant quote
+  baseFare      Float   @default(0)
+  taxRate       Float   @default(0.15) // 15% VAT in KSA
+  // Content
+  description   String?
+  imageUrl      String?
+  galleryImages String? // JSON-encoded array of URLs
+  features      String? // JSON-encoded array of amenity slugs
+  // Display + state
+  displayOrder  Int      @default(0)
+  isVisible     Boolean  @default(true)  // shown on landing
+  isAvailable   Boolean  @default(true)  // bookable right now
+  isFeatured    Boolean  @default(false)
+  // Relations
+  reviews       FleetReview[]
+  images        FleetImage[]
+  // Timestamps
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@index([category, isVisible])
+  @@index([vehicleClass, isAvailable])
   @@index([displayOrder])
+  @@index([isFeatured])
+}
+
+// ---------------------------------------------------------------------
+// FLEET IMAGES — multiple images per vehicle (gallery)
+// ---------------------------------------------------------------------
+model FleetImage {
+  id           String   @id @default(cuid())
+  fleetId      String
+  url          String
+  altText      String?
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  fleet        Fleet    @relation(fields: [fleetId], references: [id], onDelete: Cascade)
+
+  @@index([fleetId, displayOrder])
+}
+
+// ---------------------------------------------------------------------
+// FLEET REVIEWS — per-vehicle customer reviews
+// ---------------------------------------------------------------------
+model FleetReview {
+  id           String   @id @default(cuid())
+  fleetId      String
+  customerName String
+  country      String?
+  rating       Int // 1-5
+  title        String?
+  body         String
+  reviewDate   DateTime @default(now())
+  isVerified   Boolean  @default(true)
+  isApproved   Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  fleet        Fleet    @relation(fields: [fleetId], references: [id], onDelete: Cascade)
+
+  @@index([fleetId, isApproved])
+  @@index([rating])
 }
 
 // ---------------------------------------------------------------------

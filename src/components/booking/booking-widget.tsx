@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar, Clock, Search, ArrowRight, Timer } from "lucide-react";
+import { Calendar, Clock, Search, ArrowRight, Timer, Sparkles } from "lucide-react";
 import { LocationAutocomplete } from "@/components/shared/location-autocomplete";
 import { LuxuryButton } from "@/components/shared/luxury-button";
 import { useBookingStore } from "@/stores/booking-store";
@@ -16,9 +16,7 @@ import type { KsaLocation } from "@/lib/ksa-locations";
 import { cn } from "@/lib/utils";
 
 interface Props {
-  /** Default tab to show */
   defaultTab?: BookingTab;
-  /** Service context — passed to the booking modal as prefill */
   service?: ServiceSlug;
 }
 
@@ -33,13 +31,13 @@ export function BookingWidget({ defaultTab = "one-way", service }: Props) {
 
   const openBooking = useBookingStore((s) => s.openModal);
   const setViewStoreTab = useViewStore((s) => s.setBookingTab);
+  const setActiveService = useViewStore((s) => s.setActiveService);
+  const goToSearchResults = useViewStore((s) => s.goToSearchResults);
 
-  // Sync default tab when prop changes (e.g. when user clicks a service)
   useEffect(() => {
     setTab(defaultTab);
   }, [defaultTab]);
 
-  // Sync tab to global store so other components (e.g. nav dropdown) can read/write
   useEffect(() => {
     setViewStoreTab(tab);
   }, [tab, setViewStoreTab]);
@@ -48,166 +46,167 @@ export function BookingWidget({ defaultTab = "one-way", service }: Props) {
 
   const validate = (): boolean => {
     const e: Record<string, string> = {};
-    if (!pickup) e.pickup = "Please select a pickup location";
-    if (tab === "one-way" && !dropoff) e.dropoff = "Please select a destination";
-    if (!date) e.date = "Please select a date";
-    if (!time) e.time = "Please select a time";
+    if (!pickup) e.pickup = "Required";
+    if (tab === "one-way" && !dropoff) e.dropoff = "Required";
+    if (!date) e.date = "Required";
+    if (!time) e.time = "Required";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
   const handleSubmit = () => {
     if (!validate()) return;
-    openBooking({
-      widgetPrefill: {
-        pickup: pickup?.name,
-        destination: dropoff?.name,
-        pickupDate: date,
-        pickupTime: time,
-        durationHours: tab === "by-the-hour" ? duration : undefined,
-        service,
-        bookingTab: tab,
-      },
+    // Navigate to search results page instead of opening modal directly
+    goToSearchResults({
+      from: pickup?.name,
+      to: dropoff?.name,
+      date,
+      time,
+      durationHours: tab === "by-the-hour" ? duration : undefined,
+      bookingTab: tab,
     });
   };
 
   return (
-    <div className="w-full bg-card border border-foreground/[0.10] rounded-md shadow-[0_30px_60px_-30px_rgba(26,22,18,0.25)] overflow-hidden">
-      {/* Tabs */}
-      <div className="flex border-b border-foreground/[0.10] bg-gradient-to-r from-card to-[#b08842]/[0.04]">
-        <TabButton
-          active={tab === "one-way"}
-          onClick={() => setTab("one-way")}
-          label="One way"
-        />
-        <TabButton
-          active={tab === "by-the-hour"}
-          onClick={() => setTab("by-the-hour")}
-          label="By the hour"
-        />
-      </div>
+    <div className="relative w-full">
+      {/* Premium card */}
+      <div className="bg-card/95 backdrop-blur-xl border border-foreground/[0.10] rounded-lg shadow-[0_30px_80px_-30px_rgba(26,22,18,0.45),0_8px_24px_-12px_rgba(26,22,18,0.15)] overflow-hidden">
+        {/* Tab bar */}
+        <div className="flex border-b border-foreground/[0.08] bg-gradient-to-r from-card via-card to-[#b08842]/[0.05]">
+          <TabButton
+            active={tab === "one-way"}
+            onClick={() => setTab("one-way")}
+            label="One way"
+          />
+          <TabButton
+            active={tab === "by-the-hour"}
+            onClick={() => setTab("by-the-hour")}
+            label="By the hour"
+          />
+          {/* Right-side helper pill */}
+          <div className="hidden md:flex items-center gap-1.5 ml-auto px-6 text-[10px] tracking-[0.18em] uppercase text-foreground/45 font-semibold">
+            <Sparkles size={11} strokeWidth={1.5} className="text-[#b08842]" />
+            Instant Quote
+          </div>
+        </div>
 
-      {/* Form body */}
-      <div className="p-6 sm:p-8">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={tab}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-          >
-            {tab === "one-way" ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* From */}
-                <div>
-                  <LocationAutocomplete
-                    id="from-one-way"
-                    label="From"
-                    placeholder="Address, airport, hotel..."
-                    value={pickup}
-                    onChange={setPickup}
-                    excludeId={dropoff?.id}
-                    icon="from"
+        {/* Form body */}
+        <div className="p-5 sm:p-7 lg:p-8">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={tab}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {tab === "one-way" ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div>
+                    <LocationAutocomplete
+                      id="from-one-way"
+                      label="From"
+                      placeholder="Address, airport, hotel..."
+                      value={pickup}
+                      onChange={setPickup}
+                      excludeId={dropoff?.id}
+                      icon="from"
+                    />
+                    {errors.pickup && <FieldError msg={errors.pickup} />}
+                  </div>
+                  <div>
+                    <LocationAutocomplete
+                      id="to-one-way"
+                      label="To"
+                      placeholder="Address, airport, hotel..."
+                      value={dropoff}
+                      onChange={setDropoff}
+                      excludeId={pickup?.id}
+                      icon="to"
+                    />
+                    {errors.dropoff && <FieldError msg={errors.dropoff} />}
+                  </div>
+                  <DateField
+                    label="Date"
+                    value={date}
+                    onChange={setDate}
+                    min={today}
+                    error={errors.date}
                   />
-                  {errors.pickup && <FieldError msg={errors.pickup} />}
-                </div>
-
-                {/* To */}
-                <div>
-                  <LocationAutocomplete
-                    id="to-one-way"
-                    label="To"
-                    placeholder="Address, airport, hotel..."
-                    value={dropoff}
-                    onChange={setDropoff}
-                    excludeId={pickup?.id}
-                    icon="to"
+                  <TimeField
+                    label="Pickup time"
+                    value={time}
+                    onChange={setTime}
+                    error={errors.time}
                   />
-                  {errors.dropoff && <FieldError msg={errors.dropoff} />}
                 </div>
-
-                {/* Date */}
-                <DateField
-                  label="Date"
-                  value={date}
-                  onChange={setDate}
-                  min={today}
-                  error={errors.date}
-                />
-
-                {/* Time */}
-                <TimeField
-                  label="Pickup time"
-                  value={time}
-                  onChange={setTime}
-                  error={errors.time}
-                />
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* From */}
-                <div>
-                  <LocationAutocomplete
-                    id="from-hourly"
-                    label="From"
-                    placeholder="Address, airport, hotel..."
-                    value={pickup}
-                    onChange={setPickup}
-                    icon="from"
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div>
+                    <LocationAutocomplete
+                      id="from-hourly"
+                      label="From"
+                      placeholder="Address, airport, hotel..."
+                      value={pickup}
+                      onChange={setPickup}
+                      icon="from"
+                    />
+                    {errors.pickup && <FieldError msg={errors.pickup} />}
+                  </div>
+                  <DurationField
+                    label="Duration"
+                    value={duration}
+                    onChange={setDuration}
                   />
-                  {errors.pickup && <FieldError msg={errors.pickup} />}
+                  <DateField
+                    label="Date"
+                    value={date}
+                    onChange={setDate}
+                    min={today}
+                    error={errors.date}
+                  />
+                  <TimeField
+                    label="Pickup time"
+                    value={time}
+                    onChange={setTime}
+                    error={errors.time}
+                  />
                 </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
 
-                {/* Duration */}
-                <DurationField
-                  label="Duration"
-                  value={duration}
-                  onChange={setDuration}
-                />
-
-                {/* Date */}
-                <DateField
-                  label="Date"
-                  value={date}
-                  onChange={setDate}
-                  min={today}
-                  error={errors.date}
-                />
-
-                {/* Time */}
-                <TimeField
-                  label="Pickup time"
-                  value={time}
-                  onChange={setTime}
-                  error={errors.time}
-                />
-              </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Helper text + Search button */}
-        <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <p className="text-[12px] text-foreground/60 flex items-center gap-2">
-            <Clock size={12} strokeWidth={1.5} className="text-[#b08842]" />
-            {tab === "one-way" ? (
-              <>Chauffeur will wait <strong className="text-foreground/80">15 minutes free</strong> of charge.</>
-            ) : (
-              <>Minimum <strong className="text-foreground/80">2 hours</strong> · billed by the hour.</>
-            )}
-          </p>
-          <LuxuryButton
-            size="lg"
-            variant="solid-gold"
-            onClick={handleSubmit}
-            className="w-full sm:w-auto"
-          >
-            <Search size={15} strokeWidth={2} />
-            Search
-          </LuxuryButton>
+          {/* Helper text + Search button */}
+          <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <p className="text-[12px] text-foreground/65 flex items-center gap-2 font-normal">
+              <Clock size={12} strokeWidth={1.5} className="text-[#b08842]" />
+              {tab === "one-way" ? (
+                <>Chauffeur will wait <strong className="text-foreground/85 font-medium">15 minutes free</strong> of charge.</>
+              ) : (
+                <>Minimum <strong className="text-foreground/85 font-medium">2 hours</strong> · billed by the hour.</>
+              )}
+            </p>
+            <LuxuryButton
+              size="lg"
+              variant="solid-gold"
+              onClick={handleSubmit}
+              className="w-full sm:w-auto"
+            >
+              <Search size={15} strokeWidth={2} />
+              Search Available Vehicles
+            </LuxuryButton>
+          </div>
         </div>
       </div>
+
+      {/* Subtle bottom accent line — gives the card a "premium floating" feel */}
+      <div
+        aria-hidden
+        className="absolute -bottom-1 left-8 right-8 h-px"
+        style={{
+          background: "linear-gradient(90deg, transparent, rgba(176, 136, 66, 0.3), transparent)",
+        }}
+      />
     </div>
   );
 }
@@ -230,7 +229,7 @@ function TabButton({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex-1 sm:flex-none px-8 sm:px-10 py-5 text-[12px] font-semibold tracking-[0.22em] uppercase transition-all duration-300 relative",
+        "flex-1 sm:flex-none px-7 sm:px-10 py-5 text-[12px] font-semibold tracking-[0.22em] uppercase transition-all duration-300 relative",
         active
           ? "text-foreground bg-card"
           : "text-foreground/55 hover:text-foreground hover:bg-foreground/[0.02]",

@@ -28,20 +28,17 @@ export function LandingHero() {
     target: sectionRef,
     offset: ["start start", "end start"],
   });
-  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "8%"]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
 
   return (
     <section
       ref={sectionRef}
       id="top"
-      className="relative min-h-[100svh] overflow-hidden bg-[#0f0c08]"
+      className="relative min-h-[100svh] overflow-hidden bg-[#0f0c08] flex flex-col"
     >
-      {/* Background image with parallax */}
-      <motion.div
-        className="absolute inset-0 z-0"
-        style={{ opacity: 1 }}
-      >
+      {/* Background image */}
+      <div className="absolute inset-0 z-0">
         <img
           src="https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=2400&q=85"
           alt=""
@@ -58,11 +55,11 @@ export function LandingHero() {
               "radial-gradient(ellipse 70% 60% at 70% 35%, rgba(212, 184, 118, 0.22) 0%, transparent 60%)",
           }}
         />
-      </motion.div>
+      </div>
 
-      {/* Hero content */}
+      {/* Hero content — headline + CTAs + trust strip */}
       <motion.div
-        className="relative z-10 mx-auto max-w-7xl px-6 lg:px-10 pt-40 pb-12"
+        className="relative z-10 mx-auto max-w-7xl px-6 lg:px-10 pt-36 pb-10 w-full"
         style={{ y: contentY, opacity: contentOpacity }}
       >
         <div className="max-w-3xl">
@@ -71,7 +68,7 @@ export function LandingHero() {
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            className="flex items-center gap-4 mb-8 text-[12px] font-semibold tracking-[0.30em] uppercase text-[#d4b876]"
+            className="flex items-center gap-4 mb-7 text-[12px] font-semibold tracking-[0.30em] uppercase text-[#d4b876]"
           >
             <span className="w-10 h-px bg-[#d4b876]" />
             Riyadh · Saudi Arabia · Middle East
@@ -82,7 +79,7 @@ export function LandingHero() {
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            className="text-[clamp(2.75rem,7vw,6rem)] font-light leading-[1.02] tracking-[-0.025em] text-[#f6f1e9] mb-10"
+            className="text-[clamp(2.5rem,6.5vw,5.5rem)] font-light leading-[1.02] tracking-[-0.025em] text-[#f6f1e9] mb-8"
           >
             The journey,
             <br />
@@ -96,7 +93,7 @@ export function LandingHero() {
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            className="text-[clamp(1.0625rem,1.4vw,1.25rem)] font-normal leading-[1.75] text-[#f6f1e9]/80 max-w-xl mb-12"
+            className="text-[clamp(1.0625rem,1.4vw,1.25rem)] font-normal leading-[1.75] text-[#f6f1e9]/80 max-w-xl mb-10"
           >
             A private chauffeur service for those who travel with intention.
             Discreet, punctual, and uncompromising — for airports, boardrooms,
@@ -108,7 +105,7 @@ export function LandingHero() {
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            className="flex flex-col sm:flex-row gap-4"
+            className="flex flex-col sm:flex-row gap-4 mb-14"
           >
             <LuxuryButton
               size="lg"
@@ -133,13 +130,13 @@ export function LandingHero() {
             </LuxuryButton>
           </motion.div>
 
-          {/* Trust strip */}
+          {/* Trust strip — placed BEFORE booking widget to prevent overlap */}
           <motion.div
             custom={4}
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            className="mt-16 pt-8 border-t border-[#f6f1e9]/15 grid grid-cols-3 gap-6 max-w-2xl"
+            className="pt-8 border-t border-[#f6f1e9]/15 grid grid-cols-3 gap-6 max-w-2xl"
           >
             {[
               { value: "24/7", label: "Concierge" },
@@ -150,10 +147,10 @@ export function LandingHero() {
                 key={s.label}
                 className={i > 0 ? "pl-6 border-l border-[#f6f1e9]/10" : ""}
               >
-                <div className="text-[clamp(1.75rem,2.5vw,2.25rem)] font-light text-[#f6f1e9] mb-1.5 tabular-nums leading-none">
+                <div className="text-[clamp(1.5rem,2.2vw,2rem)] font-light text-[#f6f1e9] mb-1 tabular-nums leading-none">
                   {s.value}
                 </div>
-                <div className="text-[11px] tracking-[0.24em] uppercase text-[#d4b876]/90 font-semibold">
+                <div className="text-[10.5px] tracking-[0.22em] uppercase text-[#d4b876]/90 font-semibold">
                   {s.label}
                 </div>
               </div>
@@ -162,8 +159,8 @@ export function LandingHero() {
         </div>
       </motion.div>
 
-      {/* Booking widget — anchored to the bottom of the hero */}
-      <div className="relative z-20 mx-auto max-w-7xl px-6 lg:px-10 pb-16">
+      {/* Booking widget — anchored at the bottom of the hero with proper spacing */}
+      <div className="relative z-20 mx-auto max-w-7xl px-6 lg:px-10 w-full pb-16 mt-auto">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -173,13 +170,13 @@ export function LandingHero() {
         </motion.div>
       </div>
 
-      {/* Direct phone CTA — floating in bottom-right (desktop only) */}
+      {/* Direct phone CTA — desktop only */}
       <motion.a
         href="tel:+966503152119"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 0.6 }}
-        className="hidden xl:flex absolute bottom-10 right-10 z-20 items-center gap-3 px-5 py-3.5 rounded-sm bg-[#f6f1e9]/10 backdrop-blur-md border border-[#f6f1e9]/15 text-[#f6f1e9] hover:bg-[#f6f1e9]/15 hover:border-[#d4b876]/40 transition-all duration-300 group"
+        className="hidden xl:flex absolute bottom-10 right-10 z-30 items-center gap-3 px-5 py-3.5 rounded-sm bg-[#f6f1e9]/10 backdrop-blur-md border border-[#f6f1e9]/15 text-[#f6f1e9] hover:bg-[#f6f1e9]/15 hover:border-[#d4b876]/40 transition-all duration-300 group"
       >
         <Phone size={14} strokeWidth={1.8} className="text-[#d4b876]" />
         <div className="text-left">

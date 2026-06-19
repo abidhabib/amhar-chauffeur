@@ -1,5 +1,5 @@
 /**
- * GET  /api/fleet       — list fleet (public: onlyVisible, admin: all)
+ * GET  /api/fleet       — list fleet (public: visible, admin: all)
  * POST /api/fleet       — create (admin)
  */
 import { NextRequest, NextResponse } from "next/server";
@@ -11,9 +11,12 @@ const ACTOR_ID_HEADER = "x-amhar-actor-id";
 
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
-  const onlyVisible = url.searchParams.get("all") !== "1";
-  const category = url.searchParams.get("category") || undefined;
-  const items = await fleetService.list({ onlyVisible, category });
+  const all = url.searchParams.get("all") === "1";
+  const available = url.searchParams.get("available");
+  const items = await fleetService.list({
+    onlyVisible: !all,
+    onlyAvailable: available === null ? undefined : available === "1",
+  });
   return NextResponse.json({ items });
 }
 
