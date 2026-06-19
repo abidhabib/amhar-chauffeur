@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X, ArrowRight, ArrowLeft, Check, MapPin, Calendar, Clock,
@@ -40,6 +40,7 @@ export function BookingModal() {
   const preselectedCategory = useBookingStore((s) => s.preselectedCategory);
   const preselectedVehicleId = useBookingStore((s) => s.preselectedVehicleId);
   const preselectedVehicleName = useBookingStore((s) => s.preselectedVehicleName);
+  const widgetPrefill = useBookingStore((s) => s.widgetPrefill);
 
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
@@ -60,32 +61,67 @@ export function BookingModal() {
     notes: "",
   });
 
+  // Track previous `open` so we can detect the closed→open transition
+  const prevOpenRef = useRef(false);
+
+  useEffect(() => {
+    // Only apply prefill on the closed→open transition
+    if (open && !prevOpenRef.current) {
+      const next: Partial<FormState> = {};
+      if (widgetPrefill) {
+        if (widgetPrefill.pickup) next.pickup = widgetPrefill.pickup;
+        if (widgetPrefill.destination) next.destination = widgetPrefill.destination;
+        if (widgetPrefill.pickupDate) next.pickupDate = widgetPrefill.pickupDate;
+        if (widgetPrefill.pickupTime) next.pickupTime = widgetPrefill.pickupTime;
+        if (widgetPrefill.durationHours) {
+          next.notes = `Duration: ${widgetPrefill.durationHours} hours (by-the-hour booking)`;
+        }
+        if (widgetPrefill.service) {
+          const serviceLabel: Record<string, string> = {
+            "airport-transfer": "Airport transfer requested",
+            "city-to-city": "City-to-city transfer requested",
+            "hourly-car-service": "Hourly car service requested",
+            "chauffeur-hailing": "Chauffeur hailing requested",
+            "chauffeur-service": "Chauffeur service requested",
+            "limousine-service": "Limousine service requested",
+          };
+          const label = serviceLabel[widgetPrefill.service];
+          if (label) {
+            next.notes = next.notes
+              ? `${next.notes}\n${label}`
+              : label;
+          }
+        }
+      }
+      if (preselectedCategory) next.vehicleCategory = preselectedCategory;
+      if (preselectedVehicleId) next.vehicleId = preselectedVehicleId;
+
+      if (Object.keys(next).length > 0) {
+        setForm((f) => ({ ...f, ...next }));
+      }
+    }
+    // Reset state when modal closes
+    if (!open && prevOpenRef.current) {
+      setStep(0);
+      setSubmittedRef(null);
+      setForm((f) => ({
+        ...f,
+        pickup: "",
+        destination: "",
+        pickupDate: "",
+        pickupTime: "",
+        fullName: "",
+        email: "",
+        phone: "",
+        notes: "",
+      }));
+    }
+    prevOpenRef.current = open;
+  }, [open, widgetPrefill, preselectedCategory, preselectedVehicleId]);
+
   const onOpenChange = (v: boolean) => {
     if (!v) {
       closeModal();
-      setTimeout(() => {
-        setStep(0);
-        setSubmittedRef(null);
-        setForm((f) => ({
-          ...f,
-          pickup: "",
-          destination: "",
-          pickupDate: "",
-          pickupTime: "",
-          fullName: "",
-          email: "",
-          phone: "",
-          notes: "",
-        }));
-      }, 250);
-    } else {
-      if (preselectedCategory || preselectedVehicleId) {
-        setForm((f) => ({
-          ...f,
-          vehicleCategory: preselectedCategory ?? f.vehicleCategory,
-          vehicleId: preselectedVehicleId ?? f.vehicleId,
-        }));
-      }
     }
   };
 
