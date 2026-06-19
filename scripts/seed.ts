@@ -9,19 +9,13 @@
  *  - 10 client testimonials (site-level)
  *  - 6 sample leads across all statuses
  *
- * Uses the PGlite-backed Prisma client (same as src/lib/db.ts) so the seed
- * writes to the local PGlite Postgres database.
+ * Prerequisites:
+ *  - DATABASE_URL must be set in .env (pointing to a real PostgreSQL)
+ *  - Tables must exist (run `bun run db:setup` first)
  */
-import { PGlite } from "@electric-sql/pglite";
-import { PrismaPGlite } from "pglite-prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 
-const DATA_DIR = "/home/z/my-project/db/pglite";
-
-const pglite = new PGlite({ dataDir: DATA_DIR });
-await pglite.waitReady;
-const adapter = new PrismaPGlite(pglite);
-const db = new PrismaClient({ adapter });
+const db = new PrismaClient();
 
 async function main() {
   console.log("→ Seeding AMHAR database v2…");
@@ -504,5 +498,4 @@ main()
   })
   .finally(async () => {
     await db.$disconnect();
-    await pglite.close();
   });

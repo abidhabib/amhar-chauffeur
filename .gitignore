@@ -53,11 +53,10 @@ server.log
 # Skills directory (sandbox-only)
 /skills/
 
-# Database (local PGlite Postgres — each developer runs `bun run scripts/setup-db.ts` to create)
-/db/
+# Database (PostgreSQL — managed externally via DATABASE_URL)
+# Local SQLite artifacts (legacy, shouldn't exist but just in case)
 *.db
 *.db-journal
-/db/pglite/
 
 # Downloaded assets / research files (sandbox-only)
 /download/

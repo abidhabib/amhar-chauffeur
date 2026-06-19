@@ -1,158 +1,162 @@
 # Deploying AMHAR to Vercel
 
-This guide walks you through deploying the AMHAR platform to Vercel with a managed PostgreSQL database.
+Pure PostgreSQL — no SQLite, no PGlite. You need a real Postgres connection for both local dev and production.
 
 ## Prerequisites
 
-- A [Vercel account](https://vercel.com/signup) (free tier works)
+- A [Vercel account](https://vercel.com/signup) (free tier)
 - A [Neon account](https://neon.tech) (free tier — for PostgreSQL)
-- The AMHAR repo pushed to your GitHub: `https://github.com/abidhabib/amhar-chauffeur`
+- The AMHAR repo on your GitHub: `https://github.com/abidhabib/amhar-chauffeur`
 
-## Step 1 — Create a PostgreSQL database on Neon
+---
 
-1. Go to https://neon.tech and sign up (free, no credit card needed)
-2. Click **"Create Project"**
-3. Name it `amhar` (or whatever you prefer)
-4. Select the region closest to your users (for KSA: AWS Singapore or Frankfurt)
-5. Click **"Create Project"**
-6. On the dashboard, copy the **Connection String** — it looks like:
+## Step 1 — Create a PostgreSQL database on Neon (2 min)
+
+1. Go to https://neon.tech → sign up (free, no credit card)
+2. Click **"Create Project"** → name it `amhar`
+3. Region: pick the one closest to your users (for KSA: AWS Singapore or Frankfurt)
+4. Click **"Create Project"**
+5. Copy the **pooled connection string** — it looks like:
    ```
-   postgresql://amhar_owner:xxxxxxx@ep-xxx-xxx.aws-region.neon.tech/amhar?sslmode=require
+   postgresql://amhar_owner:xxxxxxx@ep-xxx-xxx-pooler.aws-region.neon.tech/amhar?sslmode=require
    ```
-7. **Save this string** — you'll need it in Step 3
+   (Use the one with `-pooler` in the hostname — it handles concurrent requests better)
 
-## Step 2 — Connect your GitHub repo to Vercel
+Save this string — you'll use it for both local dev and Vercel.
 
-1. Go to https://vercel.com and log in with GitHub
+---
+
+## Step 2 — Set up local development (3 min)
+
+```bash
+# Clone the repo
+git clone https://github.com/abidhabib/amhar-chauffeur.git
+cd amhar-chauffeur
+
+# Install dependencies
+bun install
+
+# Set your DATABASE_URL (paste your Neon string)
+echo 'DATABASE_URL="postgresql://amhar_owner:xxxxxxx@ep-xxx-xxx-pooler.aws-region.neon.tech/amhar?sslmode=require"' > .env
+
+# Generate Prisma client
+bun run db:generate
+
+# Create all tables in Postgres
+bun run db:setup    # runs `prisma db push`
+
+# Seed demo data (10 vehicles, 111 reviews, 10 site reviews, 6 leads)
+bun run db:seed
+
+# Start the dev server
+bun run dev
+```
+
+Open http://localhost:3000 — you should see the AMHAR landing page with seeded data.
+
+---
+
+## Step 3 — Connect repo to Vercel (2 min)
+
+1. Go to https://vercel.com → log in with GitHub
 2. Click **"Add New Project"**
 3. Find and select the `amhar-chauffeur` repo
-4. **DON'T CLICK DEPLOY YET** — we need to configure environment variables first
+4. **DON'T CLICK DEPLOY YET** — configure env vars first
 
-## Step 3 — Configure environment variables
+---
+
+## Step 4 — Configure Vercel environment variables (1 min)
 
 In the Vercel project setup page, scroll to **"Environment Variables"** and add:
 
 | Name | Value | Environments |
 |---|---|---|
-| `DATABASE_URL` | `postgresql://amhar_owner:xxxxxxx@ep-xxx-xxx.aws-region.neon.tech/amhar?sslmode=require` | Production, Preview, Development |
-| `DATABASE_URL_UNPOOLED` | (same Neon URL but with `-pooler` in hostname — Neon shows both) | Production, Preview, Development |
+| `DATABASE_URL` | `postgresql://amhar_owner:xxxxxxx@ep-xxx-xxx-pooler.aws-region.neon.tech/amhar?sslmode=require` | Production, Preview, Development |
 
-> Use the **pooled** connection string (the one with `-pooler`) for `DATABASE_URL` — it handles concurrent requests better. Neon shows both pooled and direct URLs on the dashboard.
+> Use the **pooled** Neon URL (with `-pooler` in the hostname) for serverless environments like Vercel.
 
-## Step 4 — Override build settings
+---
 
-In the same Vercel project setup page, scroll to **"Build and Output Settings"**:
+## Step 5 — Set the build command (1 min)
 
-| Setting | Value |
-|---|---|
-| Framework Preset | Next.js (auto-detected) |
-| Build Command | `prisma generate && next build` |
-| Install Command | `bun install` (leave default if you use npm — Vercel auto-detects) |
-| Output Directory | (leave default) |
+In the same Vercel setup page, under **"Build and Output Settings"**, override the Build Command:
+
+```
+prisma generate && next build
+```
 
 The `prisma generate` step is critical — it generates the Prisma client before the Next.js build runs.
 
-## Step 5 — Update `src/lib/db.ts` for production
+Install command can stay as default (`bun install` or `npm install` — Vercel auto-detects).
 
-**Before deploying**, you need to update the database client to use the real Postgres connection in production (not PGlite). Open `src/lib/db.ts` and replace the entire contents with:
+---
 
-```typescript
-import { PrismaClient } from "@prisma/client";
-import { Pool } from "pg";
-import { PrismaPg } from "@prisma/adapter-pg";
+## Step 6 — Click Deploy (1 min)
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
-
-function createPrismaClient(): PrismaClient {
-  const connectionString = process.env.DATABASE_URL;
-  if (!connectionString) {
-    throw new Error("DATABASE_URL environment variable is required");
-  }
-  const pool = new Pool({ connectionString });
-  const adapter = new PrismaPg(pool);
-  return new PrismaClient({ adapter });
-}
-
-export const db: PrismaClient =
-  globalForPrisma.prisma ?? createPrismaClient();
-
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
+Click **"Deploy"**. Wait 2–3 minutes for the build to complete. Vercel gives you a URL like:
+```
+https://amhar-chauffeur-xxx.vercel.app
 ```
 
-Then install the `pg` package:
-```bash
-bun add pg @types/pg
-```
+Visit it — you should see:
+- ✅ Luxury AMHAR landing page with booking widget
+- ✅ "Search Available Vehicles" → 10 luxury vehicles with pricing
+- ✅ Click any vehicle → full detail page with reviews
+- ✅ "Services" link in nav → premium services page with FAQ
+- ✅ "Operator Portal" in footer → admin dashboard with seeded leads
 
-Commit and push this change to GitHub — Vercel will auto-deploy.
+---
 
-## Step 6 — Create the database tables
+## How Local Dev + Production Stay in Sync
 
-After the first deploy, you need to create the tables in your Neon Postgres. Run this locally (or use Vercel's CLI):
+Because both local dev and Vercel point to the **same Neon Postgres database** (via the same `DATABASE_URL`), any data you create locally shows up in production and vice versa.
 
-### Option A — Run locally with your Neon URL
+**For a real production deployment**, you'd want two separate Neon projects:
+- `amhar-dev` — for local development (free tier)
+- `amhar-prod` — for production (Vercel env var)
 
-```bash
-# Clone the repo locally (if you haven't)
-git clone https://github.com/abidhabib/amhar-chauffeur.git
-cd amhar-chauffeur
-bun install
+But for getting started, one DB is fine.
 
-# Set the DATABASE_URL to your Neon connection string
-export DATABASE_URL="postgresql://amhar_owner:xxxxxxx@ep-xxx-xxx.aws-region.neon.tech/amhar?sslmode=require"
-
-# Create all tables from the Prisma schema
-bunx prisma db push
-
-# Seed the database with demo data
-bun run scripts/seed.ts
-```
-
-### Option B — Use Vercel CLI
-
-```bash
-npm i -g vercel
-vercel login
-vercel link  # link your local folder to the Vercel project
-vercel env pull .env  # pulls env vars from Vercel
-bunx prisma db push
-bun run scripts/seed.ts
-```
-
-## Step 7 — Verify the deployment
-
-1. After the build completes, Vercel gives you a URL like `https://amhar-chauffeur-xxx.vercel.app`
-2. Visit it — you should see the AMHAR landing page
-3. Test the booking widget → search results → vehicle detail flow
-4. Click **"Operator Portal"** in the footer → admin dashboard should load with the seeded data
+---
 
 ## Common Issues
 
-### ❌ "Prisma Client not generated"
-Add `prisma generate` to the build command in Vercel:
-- Settings → Build & Output Settings → Build Command: `prisma generate && next build`
+| Issue | Fix |
+|---|---|
+| `DATABASE_URL is not set` | Add the env var in `.env` locally, or in Vercel's Environment Variables UI |
+| `Prisma Client not generated` | Build command must be `prisma generate && next build` |
+| `Can't reach database server` | Check your Neon URL — make sure `?sslmode=require` is at the end |
+| `Tables don't exist` | Run `bun run db:setup` (which runs `prisma db push`) |
+| `Too many connections` | Make sure you're using the **pooled** Neon URL (with `-pooler` in hostname) |
+| SSL errors | The `db.ts` client auto-detects Neon/Vercel/Supabase URLs and enables SSL — for other providers, add `?sslmode=require` to the URL |
 
-### ❌ "DATABASE_URL is not set"
-Make sure you added the env var in Vercel for **all environments** (Production, Preview, Development).
+---
 
-### ❌ "PGlite not found" or WASM errors in production
-You forgot to update `src/lib/db.ts` — see Step 5. PGlite is only for local dev; production uses real Postgres.
+## Alternative PostgreSQL Providers
 
-### ❌ "Connection refused" / SSL errors
-Make sure your Neon URL has `?sslmode=require` at the end.
+If you don't want Neon, any of these work with zero code changes:
 
-### ❌ "Tables don't exist"
-You haven't run `prisma db push` yet — see Step 6.
+| Provider | Free tier | Notes |
+|---|---|---|
+| **Neon** | 0.5GB storage, 100 compute hours | Recommended — serverless, instant branching |
+| **Supabase** | 500MB storage, 2 projects | Includes auth + realtime if you want it later |
+| **Vercel Postgres** | 256MB storage | Built into Vercel dashboard — easiest integration |
+| **Railway** | $5 free credit | Simple, generous limits |
+| **Local Docker** | Unlimited | `docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=amhar postgres:16` |
+
+Just set `DATABASE_URL` to the provider's connection string and you're done.
+
+---
 
 ## Cost Expectations
 
 | Service | Free tier limits | When you'll outgrow it |
 |---|---|---|
-| Vercel Hobby | 100GB bandwidth, 100GB-Hours serverless function execution | ~10k monthly visitors with bookings |
+| Vercel Hobby | 100GB bandwidth, 100GB-Hours serverless | ~10k monthly visitors with bookings |
 | Neon Free | 0.5GB storage, 100 compute hours/month | ~10k leads/vehicles in database |
-| Total monthly cost | **$0** | When you exceed both above |
+| **Total monthly cost** | **$0** | When you exceed both above |
+
+---
 
 ## Custom Domain (Optional)
 
@@ -165,14 +169,16 @@ Once deployed:
 
 Wait 5–30 minutes for DNS propagation. Your site is now live at your custom domain.
 
+---
+
 ## Post-Deployment Checklist
 
 - [ ] Visit the deployed URL — home page loads
 - [ ] Search a route in the booking widget → vehicle results appear
 - [ ] Click a vehicle → detail page loads with reviews
-- [ ] Submit a quote request → confirmation modal appears
+- [ ] Submit a quote request → confirmation modal appears with reference number
 - [ ] Click "Operator Portal" in footer → admin dashboard shows seeded data
-- [ ] Create a test lead → it appears in the admin leads table
+- [ ] Create a test lead in the admin → it persists after refresh
 - [ ] (Optional) Set up a custom domain
 - [ ] (Optional) Configure Vercel Analytics (free) — Project → Analytics tab
 

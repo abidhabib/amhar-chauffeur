@@ -128,7 +128,7 @@ src/
 
 ### Prerequisites
 - Node.js 18+ (or Bun)
-- SQLite (file-based — no external DB needed)
+- A PostgreSQL database (recommended: free [Neon](https://neon.tech) account — no install needed)
 
 ### Install & Run
 
@@ -137,17 +137,22 @@ src/
 bun install
 # or: npm install
 
-# Set up the database
-bun run db:push
-# or: npx prisma db push
+# Set DATABASE_URL in .env to your PostgreSQL connection string
+# Example (Neon): postgresql://user:pass@ep-xxx.neon.tech/amhar?sslmode=require
+# Example (local Docker): postgresql://postgres:postgres@localhost:5432/amhar
+echo 'DATABASE_URL=postgresql://user:pass@host:5432/amhar' > .env
 
-# Seed the database with sample data (3 users, 16 vehicles, 10 reviews, 6 leads)
-bun run scripts/seed.ts
-# or: npx tsx scripts/seed.ts
+# Generate Prisma client
+bun run db:generate
+
+# Create all tables in PostgreSQL
+bun run db:setup    # runs `prisma db push`
+
+# Seed the database with sample data (3 users, 10 vehicles, 111 reviews, 6 leads)
+bun run db:seed
 
 # Start the dev server
 bun run dev
-# or: npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000)
@@ -174,7 +179,7 @@ Open [http://localhost:3000](http://localhost:3000)
 | Language | TypeScript 5 |
 | Styling | Tailwind CSS 4 + custom luxury design tokens |
 | UI primitives | shadcn/ui (New York) + Lucide icons |
-| Database | Prisma ORM (SQLite) |
+| Database | Prisma ORM (PostgreSQL) |
 | State | Zustand (client) + TanStack Query (server, available) |
 | Animations | Framer Motion |
 | Validation | Zod |
@@ -189,7 +194,8 @@ bun run dev          # Start dev server on port 3000
 bun run build        # Production build
 bun run start        # Start production server
 bun run lint         # Run ESLint
-bun run db:push      # Push Prisma schema to SQLite
+bun run db:setup     # Create all tables in PostgreSQL (runs `prisma db push`)
+bun run db:seed      # Seed demo data (10 vehicles, 111 reviews, 6 leads)
 bun run db:generate  # Regenerate Prisma client
 bun run db:migrate   # Create a migration
 bun run db:reset     # Reset database (destroys all data)
@@ -211,7 +217,7 @@ bun run db:reset     # Reset database (destroys all data)
 
 - **Single-page app** — the `/` route handles both landing and admin via a Zustand view store (sandbox constraint). In production, split into `/` (landing) and `/admin/*` (panel) routes.
 - **Mock auth** — admin shell auto-assigns the first super_admin as the actor. Replace with NextAuth session in production.
-- **SQLite** — file-based, perfect for demo. For production, swap to PostgreSQL by changing the `DATABASE_URL` and Prisma datasource provider.
+- **PostgreSQL** — the project uses PostgreSQL exclusively (no SQLite, no PGlite). For local dev, use a free [Neon](https://neon.tech) database or run Postgres in Docker. See `DEPLOY.md` for full deployment instructions.
 
 ---
 

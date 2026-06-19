@@ -6,14 +6,14 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   reactStrictMode: false,
-  // Externalize PGlite and the Prisma adapter so Next.js doesn't try to bundle
-  // their WASM/Node.js native modules.
+  // Externalize the pg driver and Prisma adapter so Next.js doesn't try to
+  // bundle them. `pg` uses Node.js native modules that don't play well with
+  // bundlers.
   serverExternalPackages: [
-    "@electric-sql/pglite",
-    "pglite-prisma-adapter",
+    "pg",
     "@prisma/adapter-pg",
   ],
-  // Empty turbopack config to silence the webpack warning
+  // Empty turbopack config (silences the webpack warning in Next.js 16)
   turbopack: {},
 };
 
